@@ -1,0 +1,106 @@
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
+
+    <div class="lg:col-span-1 max-w-sm">
+        <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+            <div class="mb-4">
+                <input formControlName="searchTerm" type="text" placeholder="Введите поисковый запрос"
+                    class="border border-gray-300 px-3 py-2 rounded-md w-full" id="searchInput">
+                <button (click)="onSearch()" class="bg-indigo-500 text-white px-4 py-2 rounded-md mt-1">Поиск</button>
+            </div>
+
+            <div class="mb-4">
+                <p class="mb-0.5">Количество звезд:</p>
+                <div class="flex items-center">
+                    <input formControlName="minStars" type="number" min="1" max="5"
+                        class="border border-gray-300 px-3 py-2 rounded-md w-14 text-center mr-2">
+                    <span class="mr-2">–</span>
+                    <input formControlName="maxStars" type="number" min="1" max="5"
+                        class="border border-gray-300 px-3 py-2 rounded-md w-14 text-center">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="beds" class="mb-2 block">Количество спальных мест:</label>
+                <input formControlName="sleepingPlaces" type="number" id="beds" min="1" max="16"
+                    class="border border-gray-300 px-3 py-2 rounded-md w-full">
+            </div>
+
+            <!-- <div class="mb-4">
+                <label for="roomType" class="mb-2 block">Тип номера:</label>
+                <select formControlName="roomType" id="roomType"
+                    class="border border-gray-300 px-3 py-2 rounded-md w-full">
+                    <option value="" disabled selected>Выберите тип</option>
+                    <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name }}</option>
+                </select>
+            </div> -->
+
+            <div class="mb-1">
+                <label for="sortName" class="mb-2 block">Отсортировать по:</label>
+                <select formControlName="sortName" id="sortName"
+                    class="border border-gray-300 px-3 py-2 rounded-md w-full">
+                    <option value="stars">Количество звезд</option>
+                    <option value="name">Название</option>
+                </select>
+            </div>
+
+            <div class="mb-5">
+                <label for="sortDirection" class="mb-2 block">Направление сортировки:</label>
+                <select formControlName="sortDirection" id="sortDirection"
+                    class="border border-gray-300 px-3 py-2 rounded-md w-full">
+                    <option value="asc">По возрастанию</option>
+                    <option value="desc">По убыванию</option>
+                </select>
+            </div>
+
+            <button type="submit" class="bg-indigo-500 text-white px-8 py-3 rounded-md">Отфильтровать</button>
+        </form>
+    </div>
+
+
+
+    <div class="lg:col-span-3 lg:col-start-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 w-full">
+
+        <div *ngIf="hotels.length === 0" class="mx-2">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-700 sm:text-3xl mx-auto mb-1">Номера не найдены</h1>
+            <h2 class="text-xl tracking-tight text-gray-700 sm:text-xl mx-auto">Попробуйте изменить условия фильтрации
+                или поисковый запрос</h2>
+        </div>
+
+        <div *ngFor="let hotel of hotels"
+            [class]="hotels && hotel.rooms.length > 0 ? 'bg-white shadow-lg rounded-lg p-6 mb-6 mx-auto' : 'hidden'">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                <h3 class="text-2xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">{{ hotel.name
+                    }}</h3>
+                <button *ngIf="hotels && hotel.rooms.length > 0"
+                    class="flex items-center justify-center w-36 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    (click)="redirectToHotelPage(hotel.id)">
+                    Все номера
+                </button>
+            </div>
+
+            <div class="flex items-center mt-2">
+                <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                    <svg [class]="star <= hotel.stars ? 'w-5 h-5 fill-current text-yellow-400' : 'w-5 h-5 fill-current text-gray-300 stroke-current'"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 2.5l2.45 6.79h6.305l-5.585 4.432L17.18 21.71 12 17.626l-5.18 4.084 1.92-5.798-5.585-4.432H9.55L12 2.5zm0 2.804l-1.788 4.972H6.4l4.393 3.484-1.625 4.915L12 15.658l3.83 3.118-1.626-4.915 4.393-3.484h-3.81L12 5.303z" />
+                    </svg>
+                </ng-container>
+            </div>
+
+            <div class="mt-4">
+                <div *ngFor="let room of hotel.rooms.slice(0, 3)" class="bg-gray-100 p-4 rounded-lg mb-4">
+                    <p class="text-xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">{{
+                        room.price }} BYN</p>
+                    <p>Спальных мест: {{ room.sleepingPlaces }}</p>
+                    <p>Тип номера: {{ getRoomTypeName(room.roomTypeId) }}</p>
+                    <div *ngIf="room.roomPhotos && room.roomPhotos.length > 0">
+                        <img [src]="getFirstRoomPhoto(room)" alt="Room Image" (click)="redirectToHotelPage(hotel.id)"
+                            class="w-80 h-auto mt-2 rounded-lg cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

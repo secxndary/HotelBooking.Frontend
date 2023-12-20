@@ -1,0 +1,30 @@
+<div class="flex min-h-screen justify-center items-center px-6 py-12 lg:px-8 pb-40">
+    
+    <form class="bg-white shadow-2xl shadow-indigo-500 rounded-xl px-8 pt-6 pb-8 mb-4 flex flex-row" [formGroup]="searchForm" (ngSubmit)="onSubmit()">  
+    
+    <div class="mr-10">
+      <label for="arrivalDate" class="block text-gray-700">Дата заезда</label>
+      <input formControlName="arrivalDate" id="arrivalDate" name="arrivalDate" type="date" class="border rounded-md px-3 py-1 focus:outline-none focus:ring focus:border-blue-300">
+    </div>
+  
+    <div class="mr-10">
+      <label for="departureDate" class="block text-gray-700">Дата выезда</label>
+      <input formControlName="departureDate" id="departureDate" name="departureDate" type="date" class="border rounded-md px-3 py-1 focus:outline-none focus:ring focus:border-blue-300">
+    </div>
+
+    <div class="mr-10">
+      <label for="sleepingPlaces" class="block text-gray-700">Спальных мест</label>
+      <div class="flex">
+        <button (click)="decrementSleepingPlaces()" type="button" class="px-3 py-1 border rounded-l-lg bg-gray-200 hover:bg-gray-300">-</button>
+        <input formControlName="sleepingPlaces" [value]="sleepingPlaces" id="sleepingPlaces" name="sleepingPlaces" type="number" min="1" max="16" class="border-l border-r px-3 py-1 focus:outline-none focus:ring focus:border-blue-300 text-center">
+        <button (click)="incrementSleepingPlaces()" type="button" class="px-3 py-1 border rounded-r-lg bg-gray-200 hover:bg-gray-300">+</button>
+      </div>
+    </div>
+  
+    <div class="mt-4 flex items-center justify-center">
+        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500">
+          Найти комнату
+        </button>
+    </div>
+  </form>
+</div>

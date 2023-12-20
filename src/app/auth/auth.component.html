@@ -1,0 +1,41 @@
+<div class="flex min-h-full flex-col justify-center lg:px-8 pt-32">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <img class="mx-auto h-16 w-auto" src="../../assets/images/logo.png" alt="StaySpot logo">
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Добро пожаловать в StaySpot!</h2>
+    </div>
+  
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <p *ngIf="authError" class="text-red-400 text mt-1 mb-3">{{ "Incorrect username or password." }}</p>
+
+      <form class="space-y-6" [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+        <div>
+          <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Имя пользователя</label>
+          <div class="mt-2">
+            <input formControlName="username" id="username" name="username" type="text" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <p *ngIf="errorMessages['UserName']" class="text-red-400 text-sm mt-1">{{ errorMessages['UserName'].join('\n') }}</p>
+          </div>
+        </div>
+  
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Пароль</label>
+          </div>
+          <div class="mt-2">
+            <input formControlName="password" id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <p *ngIf="errorMessages['Password']" class="text-red-400 text-sm mt-1">{{ errorMessages['Password'].join('\n') }}</p>
+          </div>
+        </div>
+  
+        <div>
+          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Войти
+          </button>
+        </div>
+      </form>
+  
+      <p class="mt-10 text-center text-sm text-gray-500">
+        Ещё не зарегистрированы?
+        <a routerLink="/signup" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Создать аккаунт</a>
+      </p>
+    </div>
+  </div>

@@ -1,0 +1,87 @@
+<div class="my-4 mx-8">
+    <div class="flex items-center" *ngIf="user">
+        <div class="my-4">
+            <h1 *ngIf="user!.firstName !== undefined && user!.lastName !== undefined && user!.firstName !== '' && user!.lastName !== ''"
+                class="text-4xl font-bold tracking-tight text-gray-700 sm:text-4xl mx-auto mt-4 mb-2">
+                Добро пожаловать, {{user!.firstName}} {{user!.lastName}}!
+            </h1>
+            <h1 *ngIf="user.userName !== undefined && (user!.firstName == undefined || user!.lastName == undefined || user!.firstName == '' || user!.lastName == '')"
+                class="text-4xl font-bold tracking-tight text-gray-700 sm:text-4xl mx-auto mt-4 mb-2">
+                Добро пожаловать, {{user.userName}}!
+            </h1>
+        </div>
+
+        <div>
+            <button (click)="signOut()"
+                class="flex items-center justify-center rounded-lg bg-indigo-600 ml-20 px-10 py-2 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-2">
+                Выйти
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="user" class="mt-6 mx-4 border-t border-gray-200 w-1/2">
+        <dl class="divide-y divide-gray-200">
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Имя</dt>
+                <dd *ngIf="user.firstName" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                    {{user.firstName}}</dd>
+                <dd *ngIf="!user.firstName" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 italic">
+                    Вы не указали имя при регистрации.</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Фамилия</dt>
+                <dd *ngIf="user.lastName" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                    {{user.lastName}}</dd>
+                <dd *ngIf="!user.lastName" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 italic">
+                    Вы не указали фамилию при регистрации.</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Имя пользователя</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.userName}}</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">E-mail</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.email}}</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Номер телефона</dt>
+                <dd *ngIf="user.phoneNumber" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.phoneNumber}}</dd>
+                <dd *ngIf="!user.phoneNumber" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 italic">
+                    Вы не указали номер телефона при регистрации.</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"></div>
+        </dl>
+    </div>
+
+
+
+    <div class="mt-4" *ngIf="reservations.length > 0">
+        <h1 class="text-4xl mt-2 mb-4 font-bold text-gray-800">Ваши бронирования ({{reservations.length}} шт.):</h1>
+
+        <div *ngFor="let reservation of reservations" class="bg-gray-100 p-6 rounded-lg mb-8 w-1/3">
+            <div class>
+                <div>
+                    <p class="text-3xl font-bold text-gray-700">{{ reservation.hotel.name }}</p>
+                    <p class="text-3xl font-semibold text-gray-700">{{ calculatePrice(reservation) }} BYN</p>
+                    <p class="text-2xl text-gray-800">Дата заезда: {{ dateToString(reservation.dateEntry)}}</p>
+                    <p class="text-2xl text-gray-800">Дата выезда: {{ dateToString(reservation.dateExit) }}</p>
+                    <p class="text-xl ">Спальных мест: {{ reservation.room.sleepingPlaces }}</p>
+                </div>
+                <button
+                    class="flex items-center justify-center rounded-lg bg-red-500 px-10 py-3 text-md font-semibold leading-6 text-white shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 mt-2"
+                    (click)="deleteReservation(reservation)">
+                    Отменить бронирование
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="reservations.length === 0">
+        <h1 class="text-3xl mt-2 mb-4 font-bold text-gray-800">У вас пока что нет забронированных номеров. </h1>
+        <button
+            class="flex items-center justify-center rounded-lg bg-indigo-500 px-7 py-3 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 mt-2"
+            (click)="redirectToHome()">
+            Просмотреть доступные номера
+        </button>
+    </div>
+</div>
