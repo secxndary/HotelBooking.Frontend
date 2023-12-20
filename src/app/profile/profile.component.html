@@ -40,12 +40,17 @@
                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.userName}}</dd>
             </div>
             <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Роли</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.roles.join(',')}}</dd>
+            </div>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt class="text-sm font-medium leading-6 text-gray-900">E-mail</dt>
                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.email}}</dd>
             </div>
             <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt class="text-sm font-medium leading-6 text-gray-900">Номер телефона</dt>
-                <dd *ngIf="user.phoneNumber" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.phoneNumber}}</dd>
+                <dd *ngIf="user.phoneNumber" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                    {{user.phoneNumber}}</dd>
                 <dd *ngIf="!user.phoneNumber" class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 italic">
                     Вы не указали номер телефона при регистрации.</dd>
             </div>
@@ -76,12 +81,21 @@
         </div>
     </div>
 
-    <div *ngIf="reservations.length === 0">
+    <div *ngIf="reservations.length === 0 && !isHotelOwner">
         <h1 class="text-3xl mt-2 mb-4 font-bold text-gray-800">У вас пока что нет забронированных номеров. </h1>
         <button
             class="flex items-center justify-center rounded-lg bg-indigo-500 px-7 py-3 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 mt-2"
             (click)="redirectToHome()">
             Просмотреть доступные номера
+        </button>
+    </div>
+
+    <!-- owner has no hotels -->
+    <div *ngIf="isHotelOwner && false">
+        <h1 class="text-3xl mt-2 mb-4 font-bold text-gray-800">У вас пока что нет созданных отелей. </h1>
+        <button
+            class="flex items-center justify-center rounded-lg bg-indigo-500 px-7 py-3 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 mt-2">
+            Создать отель
         </button>
     </div>
 </div>

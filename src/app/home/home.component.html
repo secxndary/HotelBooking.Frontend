@@ -67,11 +67,11 @@
         </div>
 
         <div *ngFor="let hotel of hotels"
-            [class]="hotels && hotel.rooms.length > 0 ? 'bg-white shadow-lg rounded-lg p-6 mb-6 mx-auto' : 'hidden'">
+            [class]="hotels && hotel.rooms !== undefined &&  hotel.rooms.length > 0 ? 'bg-white shadow-lg rounded-lg p-6 mb-6 mx-auto' : 'hidden'">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                 <h3 class="text-2xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">{{ hotel.name
                     }}</h3>
-                <button *ngIf="hotels && hotel.rooms.length > 0"
+                <button *ngIf="hotels && hotel.rooms !== undefined && hotel.rooms.length > 0"
                     class="flex items-center justify-center w-36 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     (click)="redirectToHotelPage(hotel.id)">
                     Все номера
@@ -88,7 +88,7 @@
                 </ng-container>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4" *ngIf="hotel.rooms !== undefined">
                 <div *ngFor="let room of hotel.rooms.slice(0, 3)" class="bg-gray-100 p-4 rounded-lg mb-4">
                     <p class="text-xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">{{
                         room.price }} BYN</p>

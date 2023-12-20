@@ -11,10 +11,11 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./top-bar.component.scss']
 })
 export class TopBarComponent {
-  isAdmin: boolean = false;
-  isHotelOwner: boolean = false;
 
   user!: User;
+
+  isAdmin: boolean | undefined = false;
+  isHotelOwner: boolean | undefined = false;
 
   constructor(
     private router: Router,
@@ -26,8 +27,13 @@ export class TopBarComponent {
     this.userService.getUserFromToken()
       .subscribe(
         (user: User) => {
-          console.log(user);
           this.user = user;
+          this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
+          this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
+          
+          console.log('USER: ',this.user);
+          console.log('IS_ADMIN: ', this.isAdmin);
+          console.log('IS_HOTEL_OWNER: ', this.isHotelOwner);
         },
         (error) => {
           console.error('Error fetching user details:', error);

@@ -1,0 +1,32 @@
+<div class="my-8 mx-10">
+    <table class="min-w-full">
+        <thead>
+            <tr>
+                <th
+                    class="mx-12 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                    Название</th>
+                <th
+                    class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                    Количество звёзд</th>
+                <th
+                    class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                    Описание</th>
+                <th class="mx-0 py-3 bg-gray-50"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let hotel of hotels">
+                <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
+                <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.stars }}</td>
+                <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.description }}</td>
+                <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
+                    <button
+                        class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
+                        (click)="updateHotel(hotel.id)">Обновить</button>
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl"
+                        (click)="deleteHotel(hotel.id)">Удалить</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

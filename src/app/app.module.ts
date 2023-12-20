@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { SearchComponent } from './search/search.component';
 import { HotelComponent } from './hotel/hotel.component';
 import { ProfileComponent } from './profile/profile.component';
+import { HotelOwnerComponent } from './hotel-owner/hotel-owner.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ProfileComponent } from './profile/profile.component';
     SearchComponent,
     HotelComponent,
     ProfileComponent,
+    HotelOwnerComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +47,7 @@ import { ProfileComponent } from './profile/profile.component';
       { path: 'home', component: HomeComponent },
       { path: 'hotels/:hotelId', component: HotelComponent },
       { path: 'profile', component: ProfileComponent },
+      { path: 'hotelOwner', component: HotelOwnerComponent },
     ])
   ],
   providers: [],

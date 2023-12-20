@@ -36,7 +36,7 @@ export class SignupComponent {
       .valueChanges
       .subscribe((value: boolean) => {
         const rolesControl = this.signUpForm.get('roles');
-        value ? rolesControl!.setValue(['hotelowner']) : rolesControl!.setValue(['user']);
+        value ? rolesControl!.setValue(['hotelOwner']) : rolesControl!.setValue(['user']);
       });
   }
 

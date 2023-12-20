@@ -36,11 +36,11 @@ export class AuthService {
     return refreshToken;
   }
 
-  getAuthenticationHeader(): HttpHeaders | null {
+  getAuthenticationHeader(): HttpHeaders {
     const accessToken = this.getAccessToken();
     if (!accessToken) {
       this.navigateToAuth();
-      return null;
+      return new HttpHeaders();
     }
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`

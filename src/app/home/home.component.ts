@@ -179,7 +179,7 @@ export class HomeComponent implements OnInit {
     this.httpClient.get<RoomPhoto[]>(roomPhotosUrl, { headers })
       .subscribe(
         (photos: RoomPhoto[]) => {
-          const roomIndex = this.hotels.findIndex(hotel => hotel.rooms.some(room => room.id === roomId));
+          const roomIndex = this.hotels.findIndex(hotel => hotel.rooms !== undefined && hotel.rooms.some(room => room.id === roomId));
           if (roomIndex !== -1) {
             const room = this.hotels[roomIndex].rooms.find(room => room.id === roomId);
             if (room) {
@@ -201,7 +201,7 @@ export class HomeComponent implements OnInit {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
       const imageUrl = reader.result as string;
-      const hotelIndex = this.hotels.findIndex(hotel => hotel.rooms.some(room => room.id === roomId));
+      const hotelIndex = this.hotels.findIndex(hotel => hotel.rooms !== undefined && hotel.rooms.some(room => room.id === roomId));
       if (hotelIndex !== -1) {
         const roomIndex = this.hotels[hotelIndex].rooms.findIndex(room => room.id === roomId);
         if (roomIndex !== -1) {

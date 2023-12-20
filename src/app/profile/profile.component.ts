@@ -20,6 +20,9 @@ export class ProfileComponent {
   user: User | undefined;
   reservations: Reservation[] = [];
 
+  isAdmin: boolean | undefined = false;
+  isHotelOwner: boolean | undefined = false;
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
@@ -33,7 +36,8 @@ export class ProfileComponent {
       .subscribe(
         (user: User) => {
           this.user = user;
-          console.log('User:', user);
+          this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
+          this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
           this.fetchReservations(user.id);
         },
         (error) => {
@@ -161,7 +165,6 @@ export class ProfileComponent {
 
   signOut() {
     this.authService.signOut();
-    
   }
 
 
