@@ -22,10 +22,82 @@
                 <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                     <button
                         class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
-                        (click)="updateHotel(hotel.id)">Обновить</button>
+                        (click)="openModal(hotel)">Редактировать</button>
                     <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl"
                         (click)="deleteHotel(hotel.id)">Удалить</button>
                 </td>
+
+                <!-- Modal -->
+                <div id="modalEl" tabindex="-1" aria-hidden="true"
+                    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full">
+                    <div class="relative w-full h-full max-w-2xl md:h-auto">
+
+                        <div class="relative bg-white rounded-2xl shadow dark:bg-gray-700">
+                            <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
+                                <h3 class="text-xl font-semibold text-gray-900 lg:text-2xl dark:text-white">
+                                    Редактирование отеля
+                                </h3>
+                                <button type="button" (click)="closeModal()"
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form class="px-4" *ngIf="currentHotel !== undefined" [formGroup]="hotelForm">
+                                <div class="p-6">
+                                    <div class="mr-10">
+                                        <label for="name" class="block text-gray-700 text-xl ">
+                                            Название отеля:
+                                        </label>
+                                        <input formControlName="name" id="name" name="name" type="text"
+                                            class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-52 mt-2"
+                                            [value]="currentHotel!.name">
+                                    </div>
+
+                                    <div class="mr-10 mt-4">
+                                        <label for="description" class="block text-gray-700 text-xl ">
+                                            Краткое описание отеля:
+                                        </label>
+                                        <input formControlName="description" id="description" name="description"
+                                            type="text"
+                                            class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-3/4 mt-2"
+                                            [value]="currentHotel!.description">
+                                    </div>
+
+                                    <div class="mr-10 mt-4">
+                                        <label for="stars" class="block text-gray-700 text-xl ">
+                                            Количество звезд:
+                                        </label>
+                                        <input formControlName="stars" id="stars" name="stars" type="number" min="1"
+                                            max="5"
+                                            class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-48 mt-2"
+                                            [value]="currentHotel!.stars">
+                                    </div>
+                                </div>
+                            </form>
+                            <div *ngIf="currentHotel"
+                                class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600 ml-4">
+                                <button type="button"
+                                    class="text-white bg-indigo-600 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                                    (click)="updateHotel(currentHotel!.id)">
+                                    Обновить
+                                </button>
+                                <button type="button"
+                                    class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-indigo-300 rounded-lg border border-gray-300 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600"
+                                    (click)="closeModal()">
+                                    Отмена
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </tr>
         </tbody>
     </table>

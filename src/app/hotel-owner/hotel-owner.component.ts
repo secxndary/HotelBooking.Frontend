@@ -6,6 +6,8 @@ import { Hotel } from '../interfaces/hotel';
 import { environment } from '../../environments/environments';
 import { User } from '../interfaces/user';
 import { UserService } from '../user.service';
+import { Modal } from 'flowbite';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-hotel-owner',
@@ -16,11 +18,17 @@ export class HotelOwnerComponent {
   hotels: Hotel[] = [];
   hotelOwner!: User;
 
+  hotelForm!: FormGroup;
+
+  modal: any;
+  currentHotel!: Hotel;
+
   constructor(
     private httpClient: HttpClient,
     private authService: AuthService,
     private userService: UserService,
     private notificationService: NotificationService,
+    private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
@@ -39,6 +47,14 @@ export class HotelOwnerComponent {
             this.authService.navigateToAuth();
         }
       );
+
+    this.hotelForm = this.formBuilder.group({
+      name: undefined,
+      description: undefined,
+      stars: undefined
+    });
+
+    console.log('hotel form value', this.hotelForm.value)
   }
 
   fetchHotelsByOwner() {
@@ -46,7 +62,7 @@ export class HotelOwnerComponent {
     const headers = this.authService.getAuthenticationHeader();
     const params = new HttpParams()
       .set('pageSize', 50)
-      .set('orderBy', 'stars desc');
+      .set('orderBy', 'name asc');
 
     this.httpClient.get<Hotel[]>(hotelsUrl, { headers, params })
       .subscribe(
@@ -59,7 +75,32 @@ export class HotelOwnerComponent {
   }
 
   updateHotel(hotelId: string) {
-    console.log(`Update hotel with ID: ${hotelId}`);
+    const hotelsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    const name = this.hotelForm.get('name')?.value;
+    const description = this.hotelForm.get('description')?.value;
+    const stars = this.hotelForm.get('stars')?.value
+    const hotelOwnerId = this.hotelOwner?.id;
+
+    const body = { name, description, stars, hotelOwnerId };
+
+    this.httpClient.put(hotelsUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          this.fetchHotelsByOwner();
+          this.notificationService.showSuccess('Отель успешно обновлён!', '');
+          console.log(`Update hotel with ID: ${hotelId}`);
+          this.closeModal();
+        },
+        (error) => {
+          console.error('Error fetching hotel info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Отель не удалось обновить', 'Ошибка!');
+        }
+      );
   }
 
   deleteHotel(hotelId: string) {
@@ -75,10 +116,41 @@ export class HotelOwnerComponent {
           this.notificationService.showSuccess('Отель успешно удалён', '');
         },
         (error) => {
-           console.error('Error fetching hotel info:', error);
-           this.notificationService.showError('Отель не получилось удалить', 'Ошибка!');
-           }
+          console.error('Error fetching hotel info:', error);
+          this.notificationService.showError('Отель не получилось удалить', 'Ошибка!');
+        }
       );
+  }
 
+  openModal(hotel: Hotel) {
+    const targetEl = document.getElementById("modalEl");
+    const options = {
+      modalPlacement: "bottom-right",
+      modalBackdrop: "static",
+      backdropClasses:
+        "bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"
+    };
+
+    this.currentHotel = hotel;
+    this.initializeFormWithHotelData();
+
+    const modal = new Modal(targetEl, options);
+    this.modal = modal;
+    this.modal.show();
+  }
+
+  closeModal() {
+    this.modal.hide();
+  }
+
+
+  initializeFormWithHotelData() {
+    if (this.currentHotel) {
+      this.hotelForm.patchValue({
+        name: this.currentHotel.name,
+        description: this.currentHotel.description,
+        stars: this.currentHotel.stars
+      });
+    }
   }
 }
