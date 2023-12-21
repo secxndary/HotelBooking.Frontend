@@ -46,8 +46,10 @@
               class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
               *ngIf="isHotelOwner === true">
               Панель владельца отеля</a>
-            <a href="#"
-              class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"></a>
+            <a href="/admin"
+              class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+              *ngIf="isAdmin === true">
+              Панель администратора</a>
           </div>
         </div>
       </div>
@@ -97,17 +99,20 @@
   <div class="sm:hidden" id="mobile-menu">
     <div class="space-y-1 px-2 pb-3 pt-2">
       <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-      <a href="" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+      <a href=""
+        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
         aria-current="page">Поиск</a>
       <a href="home"
-        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Домашняя
-        страница</a>
+        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
+        Домашняя страница</a>
       <a href="/hotelOwner"
         class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
         *ngIf="isHotelOwner === true">
         Панель владельца отеля</a>
-      <a href="#"
-        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"></a>
+      <a href="/admin"
+        class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+        *ngIf="isAdmin === true">
+        Панель администратора</a>
     </div>
   </div>
 </nav>

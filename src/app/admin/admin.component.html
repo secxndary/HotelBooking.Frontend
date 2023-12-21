@@ -5,7 +5,7 @@
         <div class="flex mb-6">
             <div>
                 <h1 class="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl mx-auto mt-4 mb-2">
-                    Список отелей
+                    Все отели сервиса
                 </h1>
             </div>
             <div class="mt-6 mb-0 ml-20">
@@ -28,6 +28,9 @@
                     <th
                         class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                         Описание</th>
+                    <th
+                        class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Владелец</th>
                     <th class="mx-0 py-3 bg-gray-50"></th>
                 </tr>
             </thead>
@@ -36,6 +39,7 @@
                     <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
                     <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.stars }}</td>
                     <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.description }}</td>
+                    <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.hotelOwnerId }}</td>
                     <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                         <button
                             class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
@@ -189,81 +193,4 @@
         </table>
     </div>
 
-
-
-
-
-
-
-
-
-    <!-- Rooms -->
-    <div>
-
-
-        <div>
-            <h1 class="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl mx-auto mt-28 mb-10">
-                Список комнат
-            </h1>
-
-        </div>
-
-        <!-- Table -->
-        <div *ngFor="let hotel of hotels">
-
-            <div class="flex mb-0 mt-6">
-                <div>
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-700 sm:text-3xl mx-auto mt-4 mb-4">{{
-                        hotel.name }}</h2>
-                </div>
-                <div class="mt-4 mb-4 ml-10">
-                    <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-xl"
-                        (click)="openModalCreateRoom()">Добавить комнату</button>
-                </div>
-            </div>
-
-
-            <table class="min-w-full">
-                <thead>
-                    <tr>
-                        <th
-                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Тип комнаты
-                        </th>
-                        <th
-                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Спальных мест
-                        </th>
-                        <th
-                            class="mx-12 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Цена комнаты
-                        </th>
-                        <th
-                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Отель
-                        </th>
-                        <th class="mx-0 py-3 bg-gray-50"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let room of hotel.rooms">
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ getRoomTypeName(room.roomTypeId) }}</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.sleepingPlaces }}
-                        </td>
-                        <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.price }} BYN</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
-                        <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
-                            <button
-                                class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
-                                (click)="editRoom(room)">Редактировать</button>
-                            <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl"
-                                (click)="deleteRoom(room.id)">Удалить</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-    </div>
 </div>

@@ -45,10 +45,9 @@ export class AuthComponent {
           console.log('\n');
 
           this.authService.setTokens(accessToken, refreshToken);
-          // this.signInForm.reset();
+          this.signInForm.reset();
           this.route.navigate(['/']);
           this.notificationService.showSuccess(`Добро пожаловать в StaySpot!`, '');
-          
         },
         (error) => {
           if (error.status === 422 && error.error) {
@@ -56,7 +55,8 @@ export class AuthComponent {
             this.errorMessages = error.error;
           }
           else if (error.status === 401 && error.error) {
-            this.authError = true;
+            this.notificationService.showError('Неверный пароль или имя пользователя', 'Ошибка!');
+            // this.authError = true;
           }
           else {
             this.errorMessages = {};

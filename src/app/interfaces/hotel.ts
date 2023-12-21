@@ -6,4 +6,5 @@ export interface Hotel {
     description: string;
     stars: number;
     rooms: Room[];
+    hotelOwnerId: string;
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Modal } from 'flowbite';
@@ -10,24 +10,16 @@ import { environment } from '../../environments/environments';
 import { User } from '../interfaces/user';
 import { UserService } from '../user.service';
 import { Room } from '../interfaces/room';
-import { RoomType } from '../interfaces/roomType';
 
 @Component({
-  selector: 'app-hotel-owner',
-  templateUrl: './hotel-owner.component.html',
-  styleUrls: ['./hotel-owner.component.scss']
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.scss']
 })
-export class HotelOwnerComponent {
-  deleteRoom(arg0: string) {
-    throw new Error('Method not implemented.');
-  }
-  editRoom(_t128: Room) {
-    throw new Error('Method not implemented.');
-  }
+export class AdminComponent {
   hotels: Hotel[] = [];
   hotelOwner!: User;
   currentHotel!: Hotel;
-  roomTypes: RoomType[] = [];
 
   hotelForm!: FormGroup;
   hotelFormCreate!: FormGroup;
@@ -51,7 +43,6 @@ export class HotelOwnerComponent {
         (user: User) => {
           this.hotelOwner = user;
           this.fetchHotelsByOwner();
-          this.fetchRoomTypes();
           console.log('User: ', this.hotelOwner);
         },
         (error) => {
@@ -84,7 +75,7 @@ export class HotelOwnerComponent {
   }
 
   fetchHotelsByOwner() {
-    const hotelsUrl = `${environment.API_HOSTNAME}/hotels/owner/${this.hotelOwner.id}`;
+    const hotelsUrl = `${environment.API_HOSTNAME}/hotels`;
     const headers = this.authService.getAuthenticationHeader();
     const params = new HttpParams()
       .set('pageSize', 50)
@@ -111,24 +102,10 @@ export class HotelOwnerComponent {
       .subscribe(
         (rooms: Room[]) => {
           hotel.rooms = rooms;
+          console.log('rooms',rooms);
           console.log('hotel.rooms', hotel.rooms)
         },
         (error) => { console.error('Error fetching room info:', error); }
-      );
-  }
-
-  fetchRoomTypes(): void {
-    const roomTypesUrl = `${environment.API_HOSTNAME}/roomTypes`;
-    const headers = this.authService.getAuthenticationHeader();
-
-    this.httpClient.get<RoomType[]>(roomTypesUrl, { headers })
-      .subscribe(
-        (data: RoomType[]) => {
-          this.roomTypes = data;
-        },
-        (error) => {
-          console.error('Error fetching room types:', error);
-        }
       );
   }
 
@@ -269,10 +246,5 @@ export class HotelOwnerComponent {
         stars: this.currentHotel.stars
       });
     }
-  }
-
-  getRoomTypeName(roomTypeId: string): string {
-    const roomType = this.roomTypes.find(type => type.id === roomTypeId);
-    return roomType ? roomType.name : 'Неизвестно';
   }
 }

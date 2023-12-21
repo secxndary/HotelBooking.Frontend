@@ -5,7 +5,7 @@
     </div>
   
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <p *ngIf="authError" class="text-red-400 text mt-1 mb-3">{{ "Incorrect username or password." }}</p>
+      <p *ngIf="authError" class="text-red-400 text mt-1 mb-3">Неверный пароль или имя пользователя</p>
 
       <form class="space-y-6" [formGroup]="signInForm" (ngSubmit)="onSubmit()">
         <div>

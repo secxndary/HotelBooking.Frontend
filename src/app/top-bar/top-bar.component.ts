@@ -31,9 +31,7 @@ export class TopBarComponent {
           this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
           this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
           
-          console.log('USER: ',this.user);
-          console.log('IS_ADMIN: ', this.isAdmin);
-          console.log('IS_HOTEL_OWNER: ', this.isHotelOwner);
+          console.log('User: ',this.user);
         },
         (error) => {
           console.error('Error fetching user details:', error);

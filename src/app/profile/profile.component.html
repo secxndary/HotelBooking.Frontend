@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <div *ngIf="reservations.length === 0 && !isHotelOwner">
+    <div *ngIf="reservations.length === 0 && !isHotelOwner && !isAdmin">
         <h1 class="text-3xl mt-2 mb-4 font-bold text-gray-800">У вас пока что нет забронированных номеров. </h1>
         <button
             class="flex items-center justify-center rounded-lg bg-indigo-500 px-7 py-3 text-md font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 mt-2"
