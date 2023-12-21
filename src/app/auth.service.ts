@@ -26,13 +26,11 @@ export class AuthService {
 
   getAccessToken(): string | null {
     const accessToken = localStorage.getItem('accessToken');
-    // console.log('[AUTH SERVICE] Access token', accessToken);
     return accessToken;
   }
 
   getRefreshToken(): string | null {
     const refreshToken = localStorage.getItem('refreshToken');
-    // console.log('[AUTH SERVICE] Refresh token', refreshToken);
     return refreshToken;
   }
 

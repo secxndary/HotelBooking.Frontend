@@ -18,23 +18,21 @@ import { RoomType } from '../interfaces/roomType';
   styleUrls: ['./hotel-owner.component.scss']
 })
 export class HotelOwnerComponent {
-  deleteRoom(arg0: string) {
-    throw new Error('Method not implemented.');
-  }
-  editRoom(_t128: Room) {
-    throw new Error('Method not implemented.');
-  }
   hotels: Hotel[] = [];
   hotelOwner!: User;
-  currentHotel!: Hotel;
   roomTypes: RoomType[] = [];
+
+  currentHotel!: Hotel;
+  currentRoom!: Room;
 
   hotelForm!: FormGroup;
   hotelFormCreate!: FormGroup;
+  roomForm!: FormGroup;
   roomFormCreate!: FormGroup;
 
   modal: any;
   modalCreate: any;
+  modalRoom: any;
   modalCreateRoom: any;
 
   constructor(
@@ -75,11 +73,22 @@ export class HotelOwnerComponent {
       stars: undefined
     });
 
+    this.roomForm = this.formBuilder.group({
+      price: undefined,
+      quantity: 1,
+      sleepingPlaces: undefined,
+      roomTypeId: undefined,
+    });
+
     this.roomFormCreate = this.formBuilder.group({
       price: undefined,
-      quantity: undefined,
+      quantity: 1,
       sleepingPlaces: undefined,
-      roomTypeId: ''
+      roomTypeId: undefined,
+    });
+
+    this.hotels.forEach(element => {
+      this.fetchRoomsForHotel(element);
     });
   }
 
@@ -210,6 +219,84 @@ export class HotelOwnerComponent {
   }
 
 
+  createRoom(hotel: Hotel) {
+    const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotel?.id}/rooms`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    const price = this.roomFormCreate.get('price')?.value;
+    const sleepingPlaces = this.roomFormCreate.get('sleepingPlaces')?.value;
+    const quantity = this.roomFormCreate.get('quantity')?.value;
+    const roomTypeId = this.roomFormCreate.get('roomTypeId')?.value;
+
+    console.log('roomTypeId', roomTypeId)
+
+    const body = { price, sleepingPlaces, quantity, roomTypeId };
+
+    this.httpClient.post(roomsUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          // this.fetchRoomsForHotel();
+          this.notificationService.showSuccess('Комната создана!', '');
+          this.closeModalCreateRoom();
+        },
+        (error) => {
+          console.error('Error fetching room info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Не удалось создать комнату', 'Ошибка!');
+        }
+      );
+  }
+
+  updateRoom(hotelId: string, roomId: string) {
+    const roomsUrl = `${environment.API_HOSTNAME}/rooms/${roomId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    const price = this.roomFormCreate.get('price')?.value;
+    const sleepingPlaces = this.roomFormCreate.get('sleepingPlaces')?.value;
+    const quantity = this.roomFormCreate.get('quantity')?.value;
+    const roomTypeId = this.roomFormCreate.get('roomTypeId')?.value;
+
+    const body = { price, sleepingPlaces, quantity, roomTypeId };
+    console.log(body);
+
+    this.httpClient.put(roomsUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          // this.fetchRoomsByOwner();
+          // this.notificationService.showSuccess('Отель успешно обновлён!', '');
+          console.log(`Update room with ID: ${roomId}`);
+          this.closeModal();
+        },
+        (error) => {
+          console.error('Error fetching room info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Отель не удалось обновить', 'Ошибка!');
+        }
+      );
+  }
+
+
+  deleteRoom(hotelId: string, roomId: string) {
+    const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}/rooms/${roomId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.delete(roomsUrl, { headers })
+      .subscribe(
+        (res) => {
+          console.log(`Delete room with ID: ${roomId}`);
+          this.notificationService.showSuccess('Комната успешно удалена', '');
+        },
+        (error) => {
+          console.error('Error fetching room info:', error);
+          this.notificationService.showError('Комнату не получилось удалить', 'Ошибка!');
+        }
+      );
+  }
+
   openModal(hotel: Hotel) {
     const targetEl = document.getElementById("modalEl");
     const options = {
@@ -241,8 +328,25 @@ export class HotelOwnerComponent {
     this.modalCreate.show();
   }
 
+  openModalRoom(room: Room) {
+    const targetEl = document.getElementById("modal-room");
+    const options = {
+      modalPlacement: "bottom-right",
+      modalBackdrop: "static",
+      backdropClasses:
+        "bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"
+    };
+
+    this.currentRoom = room;
+    this.initializeFormWithRoomData();
+
+    const modal = new Modal(targetEl, options);
+    this.modalRoom = modal;
+    this.modalRoom.show();
+  }
+
   openModalCreateRoom() {
-    const targetEl = document.getElementById("");
+    const targetEl = document.getElementById("modal-room-create");
     const options = {
       modalPlacement: "bottom-right",
       modalBackdrop: "static",
@@ -260,6 +364,10 @@ export class HotelOwnerComponent {
 
   closeModalCreate = () => this.modalCreate.hide();
 
+  closeModalRoom = () => this.modalRoom.hide();
+
+  closeModalCreateRoom = () => this.modalCreateRoom.hide();
+
 
   initializeFormWithHotelData() {
     if (this.currentHotel) {
@@ -271,8 +379,24 @@ export class HotelOwnerComponent {
     }
   }
 
+  initializeFormWithRoomData() {
+    if (this.currentRoom) {
+      this.roomFormCreate.patchValue({
+        sleepingPlaces: this.currentRoom.sleepingPlaces,
+        quantity: this.currentRoom.quantity,
+        price: this.currentRoom.price,
+        roomTypeId: this.currentRoom.roomTypeId
+      });
+    }
+  }
+
   getRoomTypeName(roomTypeId: string): string {
     const roomType = this.roomTypes.find(type => type.id === roomTypeId);
     return roomType ? roomType.name : 'Неизвестно';
+  }
+
+  getRoomTypeId(roomTypeName: string): string {
+    const roomTypeId = this.roomTypes.find(type => type.name === roomTypeName);
+    return roomTypeId ? roomTypeId.id : '';
   }
 }

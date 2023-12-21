@@ -130,7 +130,7 @@
                                     </h3>
                                     <button type="button" (click)="closeModalCreate()"
                                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                        data-modal-toggle="create-modal">
+                                        data-modal-toggle="create-modal" data-modal-target="create-modal">
                                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                                             fill="none" viewBox="0 0 14 14">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -222,8 +222,7 @@
                 </div>
             </div>
 
-
-            <table class="min-w-full">
+            <table class="min-w-full" *ngIf="hotel.rooms !== undefined && hotel.rooms.length > 0">
                 <thead>
                     <tr>
                         <th
@@ -247,23 +246,180 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let room of hotel.rooms">
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ getRoomTypeName(room.roomTypeId) }}</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.sleepingPlaces }}
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {{ getRoomTypeName(room.roomTypeId) }}
+                        </td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">
+                            {{ room.sleepingPlaces }}
                         </td>
                         <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.price }} BYN</td>
                         <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
                         <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                             <button
                                 class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
-                                (click)="editRoom(room)">Редактировать</button>
+                                (click)="updateRoom(hotel.id, room.id)">Редактировать</button>
                             <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl"
-                                (click)="deleteRoom(room.id)">Удалить</button>
+                                (click)="deleteRoom(hotel.id, room.id)">Удалить</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-        </div>
 
+
+
+
+            <!-- Modal Edit Room -->
+            <div id="modal-room" tabindex="-1" aria-hidden="true"
+                class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full">
+                <div class="relative w-full h-full max-w-2xl md:h-auto">
+
+                    <div class="relative bg-white rounded-2xl shadow dark:bg-gray-700">
+                        <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 lg:text-2xl dark:text-white">
+                                Редактировать комнату
+                            </h3>
+                            <button type="button" (click)="closeModalRoom()"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form class="px-4" *ngIf="currentHotel !== undefined" [formGroup]="roomForm">
+                            <div class="p-6">
+                                <div class="mr-10">
+                                    <label for="sleepingPlaces" class="block text-gray-700 text-xl ">
+                                        Количество спальных мест:
+                                    </label>
+                                    <input formControlName="sleepingPlaces" id="sleepingPlaces" name="sleepingPlaces"
+                                        type="text"
+                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-52 mt-2"
+                                        [value]="currentRoom!.sleepingPlaces">
+                                </div>
+
+                                <div class="mr-10 mt-4">
+                                    <label for="description" class="block text-gray-700 text-xl ">
+                                        Краткое описание отеля:
+                                    </label>
+                                    <input formControlName="description" id="description" name="description" type="text"
+                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-3/4 mt-2"
+                                        [value]="currentHotel!.description">
+                                </div>
+
+                                <div class="mr-10 mt-4">
+                                    <label for="stars" class="block text-gray-700 text-xl ">
+                                        Количество звезд:
+                                    </label>
+                                    <input formControlName="stars" id="stars" name="stars" type="number" min="1" max="5"
+                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-48 mt-2"
+                                        [value]="currentHotel!.stars">
+                                </div>
+                            </div>
+                        </form>
+                        <div *ngIf="currentHotel"
+                            class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600 ml-4">
+                            <button type="button"
+                                class="text-white bg-indigo-600 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                                (click)="updateHotel(currentHotel!.id)">
+                                Обновить
+                            </button>
+                            <button type="button"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-indigo-300 rounded-lg border border-gray-300 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600"
+                                (click)="closeModal()">
+                                Отмена
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal create room -->
+            <div id="modal-room-create" tabindex="-1" aria-hidden="true"
+                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Добавить комнату
+                            </h3>
+                            <button type="button" (click)="closeModalCreateRoom()"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-toggle="modal-room-create" data-modal-target="modal-room-create">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                            </button>
+                        </div>
+                        <form class="p-4 md:p-5" [formGroup]="roomFormCreate">
+                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                <div class="col-span-2">
+                                    <!-- <label for="name"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Отель
+                                    </label>
+                                    <input type="text" name="name" id="name"
+                                        class="bg-gray-50 border font-semibold border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Введите название" required="" readonly [value]="hotel.name"> -->
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="sleepingPlaces"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Спальные места
+                                    </label>
+                                    <input type="number" name="sleepingPlaces" id="sleepingPlaces"
+                                        formControlName="sleepingPlaces" min="1" max="16"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Кол-во спальных мест" required="">
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="price"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Стоимость за одни сутки
+                                    </label>
+                                    <input type="number" name="price" id="price" formControlName="price" min="1"
+                                        max="999"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="В белорусских рублях (BYN)" required="">
+                                </div>
+                                <div class="mb-4 col-span-2">
+                                    <label for="roomTypeId" class="mb-2 block">Тип номера:</label>
+                                    <select formControlName="roomTypeId" id="roomTypeId"
+                                        class="border border-gray-300 px-3 py-2 rounded-md w-full">
+                                        <option value="" disabled selected>Выберите тип</option>
+                                        <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button (click)="createRoom(hotel)"
+                                class="mt-4 text-white inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-indigo-800">
+                                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Добавить комнату
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
     </div>
 </div>
