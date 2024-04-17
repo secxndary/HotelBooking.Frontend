@@ -38,7 +38,9 @@ export class ProfileComponent {
           this.user = user;
           this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
           this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
-          this.fetchReservations(user.id);
+          setTimeout(() => {
+            this.fetchReservations(user.id);  
+          }, 100);
         },
         (error) => {
           console.error('Error fetching user details:', error);

@@ -72,7 +72,7 @@ export class AuthService {
   }
 
   navigateToAuth() {
-    this.notificationService.showError('Время пребывания в аккаунте истекло', 'Внимание!');
+    this.notificationService.showError('Войдите в аккаунт', 'Внимание!');
     this.route.navigate(['/auth']);
   }
 }

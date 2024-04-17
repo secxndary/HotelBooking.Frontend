@@ -81,7 +81,9 @@ export class HomeComponent implements OnInit {
           this.fetchHotelInfo(this.groupedRooms)
           Object.keys(this.groupedRooms).forEach(hotelId => {
             this.groupedRooms[hotelId].forEach(room => {
-              this.fetchRoomPhotoIds(room.id);
+              setTimeout(() => {
+                this.fetchRoomPhotoIds(room.id);
+              }, 100);
             });
           });
         },

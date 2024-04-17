@@ -56,8 +56,10 @@ export class HotelComponent implements OnInit {
       this.fetchHotelPhotos(this.hotelId);
       this.fetchRoomPhotos();
       this.fetchRoomTypes();
-      this.fetchRooms();
       this.fetchHotel(this.hotelId);
+      setTimeout(() => {
+        this.fetchRooms();
+      }, 50);
     });
 
     this.userService.getUserFromToken()
@@ -155,7 +157,8 @@ export class HotelComponent implements OnInit {
     this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/hotels/${this.hotelId}/rooms`, { headers })
       .subscribe(
         (rooms: Room[]) => {
-          this.hotel!.rooms = rooms;
+          if (this.hotel)
+            this.hotel!.rooms = rooms;
           console.log('Hotel rooms:', this.hotel!.rooms);
           this.fetchRoomPhotos();
         },
