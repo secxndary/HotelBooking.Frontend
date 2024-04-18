@@ -49,8 +49,7 @@
             <!-- Carousel -->
             <ngx-slick-carousel class="w-auto h-auto mt-2 rounded-lg carousel" [config]="slideConfigStatic">
                 <div ngxSlickItem *ngFor="let photo of room.roomPhotos">
-                    <img [src]="photo.imageUrl" alt="Error loading an image"
-                        class="carousel-image rounded-3xl px-1 py-1" />
+                    <img [src]="photo.imageUrl" alt="Loading..." class="carousel-image rounded-3xl px-1 py-1" />
                 </div>
             </ngx-slick-carousel>
 
@@ -84,7 +83,7 @@
                                         Введите дату заезда:
                                     </label>
                                     <input formControlName="dateStart" id="dateStart" name="dateStart" type="date"
-                                        (ngModelChange)="calculatePrice(currentRoom)"
+                                        (ngModelChange)="calculatePrice(currentRoom)" [min]="minimumDate"
                                         class="border rounded-md px-3 py-1 focus:outline-none focus:ring w-44">
                                 </div>
 
@@ -93,7 +92,7 @@
                                         Введите дату выезда:
                                     </label>
                                     <input formControlName="dateEnd" id="dateEnd" name="dateEnd" type="date"
-                                        (ngModelChange)="calculatePrice(currentRoom)"
+                                        (ngModelChange)="calculatePrice(currentRoom)" [min]="minimumDate"
                                         class="border rounded-md px-3 py-1 focus:outline-none focus:ring w-44">
                                 </div>
 

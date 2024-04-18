@@ -16,6 +16,7 @@ import { Reservation } from '../interfaces/reservation';
 import { NotificationService } from '../notification.service';
 import { Modal } from 'flowbite';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-hotel',
@@ -40,6 +41,7 @@ export class HotelComponent implements OnInit {
 
   totalPrice!: number;
   currentRoom!: Room;
+  minimumDate: string = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +50,7 @@ export class HotelComponent implements OnInit {
     private userService: UserService,
     private notificationService: NotificationService,
     private formBuilder: FormBuilder,
+    private datePipe: DatePipe,
   ) { }
 
   ngOnInit(): void {
@@ -57,9 +60,12 @@ export class HotelComponent implements OnInit {
       this.fetchRoomPhotos();
       this.fetchRoomTypes();
       this.fetchHotel(this.hotelId);
+
       setTimeout(() => {
         this.fetchRooms();
       }, 50);
+
+      this.minimumDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd')!;
     });
 
     this.userService.getUserFromToken()

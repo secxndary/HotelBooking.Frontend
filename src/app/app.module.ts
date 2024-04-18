@@ -19,6 +19,7 @@ import { HotelComponent } from './hotel/hotel.component';
 import { ProfileComponent } from './profile/profile.component';
 import { HotelOwnerComponent } from './hotel-owner/hotel-owner.component';
 import { AdminComponent } from './admin/admin.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,7 @@ import { AdminComponent } from './admin/admin.component';
       { path: 'admin', component: AdminComponent },
     ])
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
