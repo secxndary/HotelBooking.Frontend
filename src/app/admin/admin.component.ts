@@ -88,6 +88,7 @@ export class AdminComponent {
           console.log(this.hotels);
           this.hotels.forEach(hotel => {
             this.fetchRoomsForHotel(hotel);
+            this.fetchHotelOwners(hotel);
           });
         },
         (error) => { console.error('Error fetching hotel info:', error); }
@@ -102,10 +103,24 @@ export class AdminComponent {
       .subscribe(
         (rooms: Room[]) => {
           hotel.rooms = rooms;
-          console.log('rooms',rooms);
+          console.log('rooms', rooms);
           console.log('hotel.rooms', hotel.rooms)
         },
         (error) => { console.error('Error fetching room info:', error); }
+      );
+  }
+  
+  fetchHotelOwners(hotel: Hotel) {
+    const usersUrl = `${environment.API_HOSTNAME}/token/user-by-id/${hotel.hotelOwnerId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.get<User>(usersUrl, { headers })
+      .subscribe(
+        (user: User) => {
+          hotel.hotelOwner = user;
+          console.log(hotel.hotelOwner);
+        },
+        (error) => { console.error('Error fetching user info:', error); }
       );
   }
 

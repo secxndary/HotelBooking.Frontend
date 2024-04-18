@@ -1,4 +1,5 @@
 import { Room } from "./room";
+import { User } from "./user";
 
 export interface Hotel {
     id: string;
@@ -7,4 +8,5 @@ export interface Hotel {
     stars: number;
     rooms: Room[];
     hotelOwnerId: string;
+    hotelOwner: User;
 }

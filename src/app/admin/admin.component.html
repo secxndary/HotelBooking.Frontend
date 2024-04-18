@@ -8,10 +8,6 @@
                     Все отели сервиса
                 </h1>
             </div>
-            <div class="mt-6 mb-0 ml-20">
-                <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-xl"
-                    (click)="openModalCreate()">Добавить отель</button>
-            </div>
         </div>
 
 
@@ -24,13 +20,16 @@
                         Название</th>
                     <th
                         class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Количество звёзд</th>
+                        Кол-во звёзд</th>
                     <th
                         class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                         Описание</th>
                     <th
                         class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Владелец</th>
+                        Кол-во комнат</th>
+                    <th
+                        class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Менеджер</th>
                     <th class="mx-0 py-3 bg-gray-50"></th>
                 </tr>
             </thead>
@@ -39,12 +38,19 @@
                     <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
                     <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.stars }}</td>
                     <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.description }}</td>
-                    <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.hotelOwnerId }}</td>
+                    <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.rooms.length }}</td>
+                    <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200"
+                        *ngIf="hotel.hotelOwner!.firstName !== undefined && hotel.hotelOwner!.lastName !== undefined && hotel.hotelOwner!.firstName !== '' && hotel.hotelOwner!.lastName !== ''">
+                        {{hotel.hotelOwner.firstName}}
+                        {{hotel.hotelOwner.lastName}}</td>
+                    <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200"
+                        *ngIf="hotel.hotelOwner.userName !== undefined && (hotel.hotelOwner!.firstName == undefined || hotel.hotelOwner!.lastName == undefined || hotel.hotelOwner!.firstName == '' || hotel.hotelOwner!.lastName == '')">
+                        {{hotel.hotelOwner.userName}}</td>
                     <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                         <button
-                            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
+                            class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl mr-6 mb-2"
                             (click)="openModal(hotel)">Редактировать</button>
-                        <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl"
+                        <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mr-4"
                             (click)="deleteHotel(hotel.id)">Удалить</button>
                     </td>
 
