@@ -23,6 +23,8 @@ export class ProfileComponent {
   isAdmin: boolean | undefined = false;
   isHotelOwner: boolean | undefined = false;
 
+  today = new Date();
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
@@ -32,6 +34,7 @@ export class ProfileComponent {
   ) { }
 
   ngOnInit(): void {
+    console.warn('TODAY', this.today)
     this.userService.getUserFromToken()
       .subscribe(
         (user: User) => {
@@ -39,7 +42,7 @@ export class ProfileComponent {
           this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
           this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
           setTimeout(() => {
-            this.fetchReservations(user.id);  
+            this.fetchReservations(user.id);
           }, 100);
         },
         (error) => {
@@ -62,6 +65,9 @@ export class ProfileComponent {
           console.log('Reservation details:', this.reservations);
 
           this.reservations.forEach(reservation => {
+
+            console.warn(reservation.dateEntry)
+
             this.fetchRoom(reservation.roomId)!
               .subscribe(
                 (room: Room) => {
@@ -142,14 +148,6 @@ export class ProfileComponent {
     reservation.room.totalPrice = reservation.room.price;
     totalPrice = reservation.room.totalPrice;
 
-    console.log('\n');
-    console.log('ROOM', reservation.room)
-    console.log('START', dateStart)
-    console.log('END', dateEnd);
-    console.log('START_DATE', dateStartDate)
-    console.log('END_DATE', dateEndDate);
-    console.log('\n');
-
     if (dateStartDate! > dateEndDate!) {
       this.notificationService.showError('Дата заезда не может быть позже даты выезда', 'Ошибка!');
       return totalPrice;
@@ -161,7 +159,6 @@ export class ProfileComponent {
     if (totalPrice === 0)
       totalPrice = reservation.room.price;
 
-    console.log('TOTAL', totalPrice)
     return totalPrice;
   }
 
@@ -176,5 +173,9 @@ export class ProfileComponent {
 
   redirectToHome(): void {
     this.router.navigate(['/home']);
+  }
+
+  isNotOldDate(date: Date) {
+    return new Date(date) > new Date();
   }
 }
