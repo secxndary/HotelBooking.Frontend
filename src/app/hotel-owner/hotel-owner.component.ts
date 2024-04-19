@@ -117,15 +117,32 @@ export class HotelOwnerComponent {
   fetchRoomsForHotel(hotel: Hotel): Room[] | void {
     const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotel?.id}/rooms`;
     const headers = this.authService.getAuthenticationHeader();
+    const params = new HttpParams()
+      .set('isActive', 'true');
 
     this.httpClient.get<Room[]>(roomsUrl, { headers })
       .subscribe(
         (rooms: Room[]) => {
           hotel.rooms = rooms;
           console.log('hotel.rooms', hotel.rooms)
+
+          hotel.rooms.forEach(room => {
+            this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/rooms/${room.id}/reservations`, { headers, params })
+              .subscribe(
+                (reservedRooms: Room[]) => {
+                  hotel.reservedRooms = reservedRooms;
+                  room.quantityReserved = hotel.reservedRooms.length;
+                  console.log('hotel.reservedRooms', hotel.reservedRooms)
+                },
+                (error) => { console.error('Error fetching room info:', error); }
+              );
+          });
+
         },
         (error) => { console.error('Error fetching room info:', error); }
       );
+
+
   }
 
   fetchRoomTypes(): void {

@@ -266,7 +266,11 @@
                         </th>
                         <th
                             class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Свободно сейчас
+                            Занято комнат сейчас
+                        </th>
+                        <th
+                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Свободно комнат сейчас
                         </th>
                         <th
                             class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -285,7 +289,8 @@
                         </td>
                         <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.price }} BYN</td>
                         <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantity }}</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">затычка</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantityReserved }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantity - room.quantityReserved }}</td>
                         <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
                         <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                             <button

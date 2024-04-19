@@ -5,6 +5,7 @@ export interface Room {
     id: string;
     price: number;
     quantity: number;
+    quantityReserved: number;
     sleepingPlaces: number;
     hotelId: string;
     roomTypeId: string;

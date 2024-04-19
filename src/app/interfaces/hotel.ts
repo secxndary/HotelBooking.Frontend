@@ -8,6 +8,7 @@ export interface Hotel {
     stars: number;
     address: string;
     rooms: Room[];
+    reservedRooms: Room[];
     hotelOwnerId: string;
     hotelOwner: User;
 }
