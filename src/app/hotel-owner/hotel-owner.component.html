@@ -44,7 +44,8 @@
                         <button
                             class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
                             (click)="openModal(hotel)">Редактировать</button>
-                        <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 mr-5"
+                        <button
+                            class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 mr-5"
                             (click)="deleteHotel(hotel.id)">Удалить</button>
                     </td>
 
@@ -288,15 +289,29 @@
                             {{ room.sleepingPlaces }}
                         </td>
                         <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.price }} BYN</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantity }}</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantityReserved }}</td>
-                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ room.quantity - room.quantityReserved }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200 font-semibold">{{
+                            room.quantity }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200 text-red-500 font-semibold">
+                            {{
+                            room.quantityReserved !== 0
+                            ? room.quantityReserved
+                            : '–'
+                            }}
+                        </td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200 text-green-500 font-semibold">
+                            {{
+                            (room.quantity - room.quantityReserved) !== 0
+                            ? (room.quantity - room.quantityReserved)
+                            :'–'
+                            }}
+                        </td>
                         <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotel.name }}</td>
                         <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                             <button
                                 class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
                                 (click)="updateRoom(hotel.id, room.id)">Редактировать</button>
-                            <button class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 mr-5"
+                            <button
+                                class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 mr-5"
                                 (click)="deleteRoom(hotel.id, room.id)">Удалить</button>
                         </td>
                     </tr>
