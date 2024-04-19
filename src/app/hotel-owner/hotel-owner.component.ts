@@ -64,12 +64,14 @@ export class HotelOwnerComponent {
     this.hotelForm = this.formBuilder.group({
       name: undefined,
       description: undefined,
+      address: undefined,
       stars: undefined
     });
 
     this.hotelFormCreate = this.formBuilder.group({
       name: undefined,
       description: undefined,
+      address: undefined,
       stars: undefined
     });
 
@@ -149,9 +151,10 @@ export class HotelOwnerComponent {
     const name = this.hotelFormCreate.get('name')?.value;
     const description = this.hotelFormCreate.get('description')?.value;
     const stars = this.hotelFormCreate.get('stars')?.value
+    const address = this.hotelFormCreate.get('address')?.value
     const hotelOwnerId = this.hotelOwner?.id;
 
-    const body = { name, description, stars, hotelOwnerId };
+    const body = { name, description, stars, hotelOwnerId, address };
 
     this.httpClient.post(hotelsUrl, body, { headers })
       .subscribe(
@@ -177,9 +180,10 @@ export class HotelOwnerComponent {
     const name = this.hotelForm.get('name')?.value;
     const description = this.hotelForm.get('description')?.value;
     const stars = this.hotelForm.get('stars')?.value
+    const address = this.hotelForm.get('address')?.value
     const hotelOwnerId = this.hotelOwner?.id;
 
-    const body = { name, description, stars, hotelOwnerId };
+    const body = { name, description, stars, hotelOwnerId, address };
 
     this.httpClient.put(hotelsUrl, body, { headers })
       .subscribe(
@@ -247,6 +251,10 @@ export class HotelOwnerComponent {
             this.notificationService.showError('Не удалось создать комнату', 'Ошибка!');
         }
       );
+
+    setTimeout(() =>
+      window.location.reload(),
+      200);
   }
 
   updateRoom(hotelId: string, roomId: string) {
@@ -295,6 +303,10 @@ export class HotelOwnerComponent {
           this.notificationService.showError('Комнату не получилось удалить', 'Ошибка!');
         }
       );
+
+    setTimeout(() =>
+      window.location.reload(),
+      200);
   }
 
   openModal(hotel: Hotel) {
@@ -374,7 +386,8 @@ export class HotelOwnerComponent {
       this.hotelForm.patchValue({
         name: this.currentHotel.name,
         description: this.currentHotel.description,
-        stars: this.currentHotel.stars
+        stars: this.currentHotel.stars,
+        address: this.currentHotel.address
       });
     }
   }
