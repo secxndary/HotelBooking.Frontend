@@ -6,6 +6,7 @@ export interface Hotel {
     name: string;
     description: string;
     stars: number;
+    address: string;
     rooms: Room[];
     hotelOwnerId: string;
     hotelOwner: User;

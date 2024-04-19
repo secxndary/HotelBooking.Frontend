@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { User } from '../interfaces/user';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { environment } from '../../environments/environments';
 import { UserService } from '../user.service';
@@ -34,7 +34,6 @@ export class ProfileComponent {
   ) { }
 
   ngOnInit(): void {
-    console.warn('TODAY', this.today)
     this.userService.getUserFromToken()
       .subscribe(
         (user: User) => {
@@ -57,17 +56,17 @@ export class ProfileComponent {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
+    const params = new HttpParams()
+      .set('pageSize', 50)
+      .set('orderBy', 'dateEntry desc');
 
-    this.httpClient.get<Reservation[]>(`${environment.API_HOSTNAME}/users/${userId}/reservations`, { headers })
+    this.httpClient.get<Reservation[]>(`${environment.API_HOSTNAME}/users/${userId}/reservations`, { headers, params })
       .subscribe(
         (reservations: Reservation[]) => {
           this.reservations = reservations;
           console.log('Reservation details:', this.reservations);
 
           this.reservations.forEach(reservation => {
-
-            console.warn(reservation.dateEntry)
-
             this.fetchRoom(reservation.roomId)!
               .subscribe(
                 (room: Room) => {
