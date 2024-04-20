@@ -95,7 +95,7 @@
                     <p>Спальных мест: {{ room.sleepingPlaces }}</p>
                     <p>Тип номера: {{ getRoomTypeName(room.roomTypeId) }}</p>
                     <div *ngIf="room.roomPhotos && room.roomPhotos.length > 0">
-                        <img [src]="getFirstRoomPhoto(room)" alt="Room Image" (click)="redirectToHotelPage(hotel.id)"
+                        <img [src]="getFirstRoomPhoto(room)" alt="" (click)="redirectToHotelPage(hotel.id)"
                             class="w-80 h-auto mt-2 rounded-lg cursor-pointer">
                     </div>
                 </div>

@@ -4,7 +4,7 @@
     <!-- Hotel photos carousel -->
     <ngx-slick-carousel class="carousel" [config]="slideConfig">
         <div ngxSlickItem *ngFor="let photo of hotelPhotos">
-            <img [src]="photo.imageUrl" alt="Loading..." class="carousel-image rounded-3xl px-0.5 py-1" />
+            <img [src]="photo.imageUrl" alt="" class="carousel-image rounded-3xl px-0.5 py-1" />
         </div>
     </ngx-slick-carousel>
 
@@ -50,7 +50,7 @@
                 <!-- Carousel -->
                 <ngx-slick-carousel class="w-auto h-auto mt-2 rounded-lg carousel" [config]="slideConfigStatic">
                     <div ngxSlickItem *ngFor="let photo of room.roomPhotos">
-                        <img [src]="photo.imageUrl" alt="Loading..." class="carousel-image rounded-3xl px-1 py-1" />
+                        <img [src]="photo.imageUrl" alt="" class="carousel-image rounded-3xl px-1 py-1" />
                     </div>
                 </ngx-slick-carousel>
 
