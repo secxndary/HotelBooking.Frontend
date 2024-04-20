@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { Hotel } from '../interfaces/hotel';
 import { Room } from '../interfaces/room';
@@ -159,6 +159,8 @@ export class HotelComponent implements OnInit {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
+    const params = new HttpParams()
+      .set('isActive', 'true');
 
     this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/hotels/${this.hotelId}/rooms`, { headers })
       .subscribe(
@@ -166,6 +168,23 @@ export class HotelComponent implements OnInit {
           if (this.hotel)
             this.hotel!.rooms = rooms;
           console.log('Hotel rooms:', this.hotel!.rooms);
+
+          this.hotel!.rooms.forEach(room => {
+            this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/rooms/${room.id}/reservations`, { headers, params })
+              .subscribe(
+                (reservedRooms: Room[]) => {
+                  this.hotel!.reservedRooms = reservedRooms;
+                  room.quantityReserved = reservedRooms.length;
+                  // console.log('this.hotel.reservedRooms', this.hotel!.reservedRooms)
+                  console.log('price', room.price)
+                  console.log('total qty', room.quantity)
+                  console.log('reserved qty', room.quantityReserved)
+                  console.log('\n')
+                },
+                (error) => { console.error('Error fetching room info:', error); }
+              );
+          });
+
           this.fetchRoomPhotos();
         },
         (error) => {
@@ -195,7 +214,7 @@ export class HotelComponent implements OnInit {
                   return;
                 }
                 photo.imageUrl = imageUrl;
-                console.log(`Room ${room.id} photo ${photo.id}`);
+                // console.log(`Room ${room.id} photo ${photo.id}`);
                 resolve();
               }, false);
 
@@ -318,6 +337,8 @@ export class HotelComponent implements OnInit {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
+    const params = new HttpParams()
+      .set('isActive', 'true');
 
     const dateEntry = this.reservationForm.get('dateStart')?.value;
     const dateExit = this.reservationForm.get('dateEnd')?.value;
@@ -338,21 +359,37 @@ export class HotelComponent implements OnInit {
       return;
     }
 
-    this.httpClient.post<Reservation>(reservationUrl, body, { headers })
+    this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/rooms/${room.id}/reservations`, { headers, params })
       .subscribe(
-        (reservation: Reservation) => {
-          console.log(reservation);
-          if (reservation !== null || reservation !== undefined)
-            this.notificationService.showSuccess('Бронирование успешно', 'Успех!');
-          this.closeModal();
+        (reservedRooms: Room[]) => {
+          room.quantityReserved = reservedRooms.length;
+          console.warn(room.quantityReserved)
+
+          if (room.quantityReserved > 0) {
+            this.notificationService.showError('Данная комната уже забронирована. Пожалуйста, выберите другую', 'Ошибка!');
+            return;
+          }
+          else {
+            this.httpClient.post<Reservation>(reservationUrl, body, { headers })
+              .subscribe(
+                (reservation: Reservation) => {
+                  console.log(reservation);
+                  if (reservation !== null || reservation !== undefined)
+                    this.notificationService.showSuccess('Бронирование успешно', 'Успех!');
+                  this.closeModal();
+                },
+                (error) => {
+                  console.error('Error fetching room types:', error);
+                  if (error.status === 403)
+                    this.notificationService.showError('У вас нет прав для выполнения этого действия', 'Ошибка!');
+                  else
+                    this.notificationService.showError('Введите даты заезда и выезда', 'Ошибка!');
+                }
+              );
+          }
+
         },
-        (error) => {
-          console.error('Error fetching room types:', error);
-          if (error.status === 403)
-            this.notificationService.showError('У вас нет прав для выполнения этого действия', 'Ошибка!');
-          else
-            this.notificationService.showError('Введите даты заезда и выезда', 'Ошибка!');
-        }
+        (error) => { console.error('Error fetching room info:', error); }
       );
   }
 
