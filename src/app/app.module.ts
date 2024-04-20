@@ -46,7 +46,7 @@ import { DatePipe } from '@angular/common';
     RouterModule.forRoot([
       { path: 'auth', component: AuthComponent },
       { path: 'signup', component: SignupComponent },
-      { path: '', component: SearchComponent },
+      { path: 'search', component: SearchComponent },
       { path: 'home', component: HomeComponent },
       { path: 'hotels/:hotelId', component: HotelComponent },
       { path: 'profile', component: ProfileComponent },
