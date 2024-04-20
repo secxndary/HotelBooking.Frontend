@@ -121,7 +121,7 @@ export class ProfileComponent {
       .subscribe(
         (data: Reservation) => {
           console.log('deleted ' + reservation.id);
-          this.notificationService.showSuccess('Успешно удалено', 'Успех!');
+          this.notificationService.showSuccess('Вы отменили данное бронирование', 'Успех!');
           window.location.reload();
         },
         (error) => {

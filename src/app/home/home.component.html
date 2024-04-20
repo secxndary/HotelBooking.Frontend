@@ -90,8 +90,9 @@
 
             <div class="mt-4" *ngIf="hotel.rooms !== undefined">
                 <div *ngFor="let room of hotel.rooms.slice(0, 3)" class="bg-gray-100 p-4 rounded-lg mb-4">
-                    <p class="text-xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">{{
-                        room.price }} BYN</p>
+                    <p class="text-xl font-semibold cursor-pointer" (click)="redirectToHotelPage(hotel.id)">
+                        {{room.price }} BYN
+                    </p>
                     <p>Спальных мест: {{ room.sleepingPlaces }}</p>
                     <p>Тип номера: {{ getRoomTypeName(room.roomTypeId) }}</p>
                     <div *ngIf="room.roomPhotos && room.roomPhotos.length > 0">

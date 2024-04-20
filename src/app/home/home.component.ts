@@ -234,7 +234,13 @@ export class HomeComponent implements OnInit {
   }
 
   redirectToHotelPage(hotelId: string) {
-    this.router.navigate([`hotels/${hotelId}`]);
+    this.router.navigate([`hotels/${hotelId}`], {
+      queryParams: {
+        arrivalDate: this.arrivalDate,
+        departureDate: this.departureDate,
+        sleepingPlaces: this.sleepingPlaces
+      }
+    });
   }
 
 

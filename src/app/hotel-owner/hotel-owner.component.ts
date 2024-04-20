@@ -366,8 +366,8 @@ export class HotelOwnerComponent {
         "bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"
     };
 
-    this.currentRoom = room;
-    this.initializeFormWithRoomData();
+    // this.currentRoom = room;
+    // this.initializeFormWithRoomData();
 
     const modal = new Modal(targetEl, options);
     this.modalRoom = modal;

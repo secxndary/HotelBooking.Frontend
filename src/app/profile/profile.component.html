@@ -39,8 +39,8 @@
                 <dt class="text-sm font-medium leading-6 text-gray-900">Имя пользователя</dt>
                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.userName}}</dd>
             </div>
-            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt class="text-sm font-medium leading-6 text-gray-900">Роли</dt>
+            <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0" *ngIf="isAdmin || isHotelOwner">
+                <dt class="text-sm font-medium leading-6 text-gray-900">Роль</dt>
                 <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{user.roles.join(',')}}</dd>
             </div>
             <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
