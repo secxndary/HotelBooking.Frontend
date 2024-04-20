@@ -57,12 +57,14 @@ export class AdminComponent {
     this.hotelForm = this.formBuilder.group({
       name: undefined,
       description: undefined,
+      address: undefined,
       stars: undefined
     });
 
     this.hotelFormCreate = this.formBuilder.group({
       name: undefined,
       description: undefined,
+      address: undefined,
       stars: undefined
     });
 
@@ -131,10 +133,11 @@ export class AdminComponent {
 
     const name = this.hotelFormCreate.get('name')?.value;
     const description = this.hotelFormCreate.get('description')?.value;
+    const address = this.hotelFormCreate.get('address')?.value;
     const stars = this.hotelFormCreate.get('stars')?.value
     const hotelOwnerId = this.hotelOwner?.id;
 
-    const body = { name, description, stars, hotelOwnerId };
+    const body = { name, description, stars, address, hotelOwnerId };
 
     this.httpClient.post(hotelsUrl, body, { headers })
       .subscribe(
@@ -159,10 +162,11 @@ export class AdminComponent {
 
     const name = this.hotelForm.get('name')?.value;
     const description = this.hotelForm.get('description')?.value;
+    const address = this.hotelForm.get('address')?.value;
     const stars = this.hotelForm.get('stars')?.value
     const hotelOwnerId = this.hotelOwner?.id;
 
-    const body = { name, description, stars, hotelOwnerId };
+    const body = { name, description, stars, address, hotelOwnerId };
 
     this.httpClient.put(hotelsUrl, body, { headers })
       .subscribe(
@@ -258,6 +262,7 @@ export class AdminComponent {
       this.hotelForm.patchValue({
         name: this.currentHotel.name,
         description: this.currentHotel.description,
+        address: this.currentHotel.address,
         stars: this.currentHotel.stars
       });
     }
