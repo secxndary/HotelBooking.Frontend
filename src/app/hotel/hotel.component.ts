@@ -30,8 +30,13 @@ export class HotelComponent implements OnInit {
   hotelPhotos: HotelPhoto[] = [];
   roomTypes: RoomType[] = [];
 
+  arrivalDate!: Date;
+  departureDate!: Date;
+  sleepingPlaces!: number;
+
   user: User | undefined;
   accessToken: string | undefined;
+  activeReservations: Reservation[] = [];
 
   slideConfig = slideConfig;
   slideConfigStatic = slideConfigStatic;
@@ -42,6 +47,7 @@ export class HotelComponent implements OnInit {
   totalPrice!: number;
   currentRoom!: Room;
   minimumDate: string = "";
+  maxActiveReservations = 5;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,6 +60,8 @@ export class HotelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.getQueryParams();
+
     this.route.params.subscribe(params => {
       this.hotelId = params['hotelId'];
       this.fetchHotelPhotos(this.hotelId);
@@ -73,6 +81,7 @@ export class HotelComponent implements OnInit {
         (user: User) => {
           this.user = user;
           console.log('User:', user);
+          this.fetchReservations(this.user!.id);
         },
         (error) => {
           console.error('Error fetching user details:', error);
@@ -80,8 +89,8 @@ export class HotelComponent implements OnInit {
       );
 
     this.reservationForm = this.formBuilder.group({
-      dateStart: undefined,
-      dateEnd: undefined,
+      dateStart: this.arrivalDate,
+      dateEnd: this.departureDate,
     });
   }
 
@@ -299,6 +308,28 @@ export class HotelComponent implements OnInit {
       );
   }
 
+  fetchReservations(userId: string) {
+    const accessToken = this.authService.getAccessToken();
+    if (!accessToken) return;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+    const params = new HttpParams()
+      .set('pageSize', 50)
+      .set('isActive', 'true');
+
+    this.httpClient.get<Reservation[]>(`${environment.API_HOSTNAME}/users/${userId}/reservations`, { headers, params })
+      .subscribe(
+        (reservations: Reservation[]) => {
+          this.activeReservations = reservations;
+          console.warn('User Reservations active:', this.activeReservations);
+          console.warn('User Reservations active COUNT:', this.activeReservations.length);
+        },
+        (error) => { console.error('Error fetching reservations details:', error); }
+      );
+  }
+
+
   openModal(room: Room): void {
     this.totalPrice = room.price;
     this.currentRoom = room;
@@ -338,7 +369,11 @@ export class HotelComponent implements OnInit {
       Authorization: `Bearer ${accessToken}`
     });
     const params = new HttpParams()
+      .set('pageSize', 50)
+      .set('orderBy', 'dateEntry desc')
       .set('isActive', 'true');
+
+    this.fetchReservations(this.user!.id);
 
     const dateEntry = this.reservationForm.get('dateStart')?.value;
     const dateExit = this.reservationForm.get('dateEnd')?.value;
@@ -359,13 +394,20 @@ export class HotelComponent implements OnInit {
       return;
     }
 
+    if (this.activeReservations.length > 4) {
+      this.notificationService.showError(`У вас не может быть более 5 активных бронирований`, 'Ошибка!');
+      return;
+    }
+
     this.httpClient.get<Room[]>(`${environment.API_HOSTNAME}/rooms/${room.id}/reservations`, { headers, params })
       .subscribe(
         (reservedRooms: Room[]) => {
           room.quantityReserved = reservedRooms.length;
+          console.warn(room.quantity)
           console.warn(room.quantityReserved)
+          console.warn(room.quantity - room.quantityReserved)
 
-          if (room.quantityReserved > 0) {
+          if (room.quantity - room.quantityReserved === 0) {
             this.notificationService.showError('Данная комната уже забронирована. Пожалуйста, выберите другую', 'Ошибка!');
             return;
           }
@@ -377,6 +419,9 @@ export class HotelComponent implements OnInit {
                   if (reservation !== null || reservation !== undefined)
                     this.notificationService.showSuccess('Бронирование успешно', 'Успех!');
                   this.closeModal();
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 500);
                 },
                 (error) => {
                   console.error('Error fetching room types:', error);
@@ -457,5 +502,17 @@ export class HotelComponent implements OnInit {
   getRoomTypeName(roomTypeId: string): string {
     const roomType = this.roomTypes.find(type => type.id === roomTypeId);
     return roomType ? roomType.name : 'Неизвестно';
+  }
+
+  private getQueryParams(): void {
+    this.route.queryParams.subscribe(params => {
+      this.arrivalDate = params['arrivalDate'];
+      this.departureDate = params['departureDate'];
+      this.sleepingPlaces = params['sleepingPlaces'];
+
+      console.log('Arrival Date:', this.arrivalDate);
+      console.log('Departure Date:', this.departureDate);
+      console.log('Sleeping Places:', this.sleepingPlaces);
+    });
   }
 }
