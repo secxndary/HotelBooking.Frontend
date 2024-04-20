@@ -122,7 +122,9 @@ export class ProfileComponent {
         (data: Reservation) => {
           console.log('deleted ' + reservation.id);
           this.notificationService.showSuccess('Вы отменили данное бронирование', 'Успех!');
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         },
         (error) => {
           console.error('Error deleting reservation:', error);
