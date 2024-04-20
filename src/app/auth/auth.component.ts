@@ -44,10 +44,17 @@ export class AuthComponent {
           console.log('Refresh Token:', refreshToken);
           console.log('\n');
 
-          this.authService.setTokens(accessToken, refreshToken);
-          this.signInForm.reset();
-          this.route.navigate(['/']);
-          this.notificationService.showSuccess(`Добро пожаловать в StaySpot!`, '');
+          if (response.message == 'AccountNotActivated') {
+            this.signInForm.reset();
+            this.errorMessages = {};
+            this.route.navigate(['hotel-owner-account-still-not-activated-yet']);
+          }
+          else {
+            this.authService.setTokens(accessToken, refreshToken);
+            this.signInForm.reset();
+            this.route.navigate(['/home']);
+            this.notificationService.showSuccess(`Добро пожаловать в StaySpot!`, '');
+          }
         },
         (error) => {
           if (error.status === 422 && error.error) {

@@ -48,9 +48,21 @@ export class SignupComponent {
       .subscribe(
         (response: any) => {
           console.log(this.signUpForm.value);
-          this.signUpForm.reset();
-          this.errorMessages = {};
-          this.router.navigate(['/auth']);
+
+          if (response.message == 'AccountNotActivated') {
+            this.signUpForm.reset();
+            this.errorMessages = {};
+
+            // const checkBox = document.getElementById('terms') as HTMLInputElement;
+            // checkBox!.disabled = true;
+
+            this.router.navigate(['hotel-owner-account-not-activated']);
+          } else {
+            this.signUpForm.reset();
+            this.errorMessages = {};
+            this.router.navigate(['/auth']);
+          }
+
         },
         (error) => {
           if (error.status === 422 && error.error) {

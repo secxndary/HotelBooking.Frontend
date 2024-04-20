@@ -9,11 +9,11 @@ import { Router, ActivatedRouteSnapshot } from '@angular/router';
 export class AppComponent {
   title = 'HotelBooking';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
-  isAuthOrSignupRoute(): boolean {
+  isAuthOrSignupOrNotActivatedRoute(): boolean {
     const route = this.router.routerState.snapshot.root;
-    return this.isAuthRoute(route) || this.isSignupRoute(route);
+    return this.isAuthRoute(route) || this.isSignupRoute(route) || this.isHotelOwnerAccountNotActivatedRoute(route) || this.isHotelOwnerAccountStillNotActivatedYetRoute(route);
   }
 
   isAuthRoute(route: ActivatedRouteSnapshot): boolean {
@@ -26,5 +26,17 @@ export class AppComponent {
     if (route.firstChild)
       return this.isSignupRoute(route.firstChild);
     return route.routeConfig?.path === 'signup';
+  }
+
+  isHotelOwnerAccountNotActivatedRoute(route: ActivatedRouteSnapshot): boolean {
+    if (route.firstChild)
+      return this.isSignupRoute(route.firstChild);
+    return route.routeConfig?.path === 'hotel-owner-account-not-activated';
+  }
+
+  isHotelOwnerAccountStillNotActivatedYetRoute(route: ActivatedRouteSnapshot): boolean {
+    if (route.firstChild)
+      return this.isSignupRoute(route.firstChild);
+    return route.routeConfig?.path === 'hotel-owner-account-still-not-activated-yet';
   }
 }

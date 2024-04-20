@@ -20,6 +20,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { HotelOwnerComponent } from './hotel-owner/hotel-owner.component';
 import { AdminComponent } from './admin/admin.component';
 import { DatePipe } from '@angular/common';
+import { HotelOwnerAccountNotActivatedComponent } from './hotel-owner-account-not-activated/hotel-owner-account-not-activated.component';
+import { HotelOwnerAccountStillNotActivatedYetComponent } from './hotel-owner-account-still-not-activated-yet/hotel-owner-account-still-not-activated-yet.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { DatePipe } from '@angular/common';
     ProfileComponent,
     HotelOwnerComponent,
     AdminComponent,
+    HotelOwnerAccountNotActivatedComponent,
+    HotelOwnerAccountStillNotActivatedYetComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +56,8 @@ import { DatePipe } from '@angular/common';
       { path: 'profile', component: ProfileComponent },
       { path: 'hotelOwner', component: HotelOwnerComponent },
       { path: 'admin', component: AdminComponent },
+      { path: 'hotel-owner-account-not-activated', component: HotelOwnerAccountNotActivatedComponent },
+      { path: 'hotel-owner-account-still-not-activated-yet', component: HotelOwnerAccountStillNotActivatedYetComponent },
     ])
   ],
   providers: [DatePipe],
