@@ -416,15 +416,19 @@ export class HotelComponent implements OnInit {
               .subscribe(
                 (reservation: Reservation) => {
                   console.log(reservation);
+
                   if (reservation !== null || reservation !== undefined)
                     this.notificationService.showSuccess('Бронирование успешно', 'Успех!');
+
                   this.closeModal();
+
                   setTimeout(() => {
                     window.location.reload();
                   }, 500);
                 },
                 (error) => {
                   console.error('Error fetching room types:', error);
+
                   if (error.status === 403)
                     this.notificationService.showError('У вас нет прав для выполнения этого действия', 'Ошибка!');
                   else
