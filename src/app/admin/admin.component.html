@@ -1,8 +1,74 @@
 <div class="my-8 mx-10">
 
-    <!-- Hotels -->
+
     <div>
-        <div class="flex mb-6">
+        <!-- Requests grid -->
+        <div class="mb-6">
+            <h1 class="text-5xl sm:text-5xl font-bold tracking-tight text-gray-700 mx-auto mt-4 mb-2">
+                Ожидают подтверждения
+            </h1>
+
+            <h1 class="text-3xl sm:text-3xl font-bold tracking-tight text-gray-700 mx-auto mt-8 mb-1">
+                Аккаунты менеджера отеля
+            </h1>
+
+            <div class="text-xl sm:text-xl font-semibold tracking-tight text-gray-700 mx-auto mt-0 mb-2"
+                *ngIf="hotelOwnersNotActivated.length === 0">На данный момент запросов, ожидающих подтверждения, нет.
+            </div>
+
+            <table class="min-w-full"
+                *ngIf="hotelOwnersNotActivated !== undefined && hotelOwnersNotActivated !== null && hotelOwnersNotActivated.length > 0">
+                <thead>
+                    <tr>
+                        <th
+                            class="mx-12 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Имя</th>
+                        <th
+                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Фамилия</th>
+                        <th
+                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            E-mail</th>
+                        <th
+                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Логин</th>
+                        <th
+                            class="mx-10 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider mr-6">
+                            Номер телефона
+                        </th>
+                        <th class="mx-0 py-3 bg-gray-50"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let hotelOwner of hotelOwnersNotActivated">
+                        <td class="mx-12 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotelOwner.firstName ?
+                            hotelOwner.firstName : '–' }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotelOwner.lastName ?
+                            hotelOwner.lastName : '–' }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotelOwner.email }}</td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotelOwner.userName }}
+                        </td>
+                        <td class="mx-10 py-4 whitespace-no-wrap border-b border-gray-200">{{ hotelOwner.phoneNumber ?
+                            hotelOwner.phoneNumber : '–' }}</td>
+                        <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
+                            <button
+                                class="bg-lime-600 hover:bg-lime-500 text-white font-semibold py-2 px-4 rounded-xl mr-6 mb-2"
+                                (click)="confirmRegistration(hotelOwner)">Подтвердить</button>
+                            <button
+                                class="bg-rose-500 hover:bg-rose-400 text-white font-semibold py-2 px-4 rounded-xl mr-4"
+                                (click)="dontConfirmRegistration(hotelOwner)">Отказать</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+
+        <!-- Hotels grid -->
+        <div class="flex mb-6  mt-24">
             <div>
                 <h1 class="text-4xl font-bold tracking-tight text-gray-700 sm:text-5xl mx-auto mt-4 mb-2">
                     Все отели сервиса
@@ -144,20 +210,5 @@
                 </tr>
             </tbody>
         </table>
-
-
-
-
-
-        <div class="flex mb-6 mt-12">
-            <div>
-                <h1 class="text-4xl font-bold tracking-tight text-gray-700 sm:text-4xl mx-auto mt-4 mb-2">
-                    Ожидают подтверждения
-                </h1>
-            </div>
-        </div>
-
-
     </div>
-
 </div>

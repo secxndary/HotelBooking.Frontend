@@ -20,6 +20,7 @@ export class AdminComponent {
   hotels: Hotel[] = [];
   hotelOwner!: User;
   currentHotel!: Hotel;
+  hotelOwnersNotActivated: User[] = [];
 
   hotelForm!: FormGroup;
   hotelFormCreate!: FormGroup;
@@ -43,6 +44,7 @@ export class AdminComponent {
         (user: User) => {
           this.hotelOwner = user;
           this.fetchHotelsByOwner();
+          this.fetchHotelOwnersNotActivated();
           console.log('User: ', this.hotelOwner);
         },
         (error) => {
@@ -111,7 +113,7 @@ export class AdminComponent {
         (error) => { console.error('Error fetching room info:', error); }
       );
   }
-  
+
   fetchHotelOwners(hotel: Hotel) {
     const usersUrl = `${environment.API_HOSTNAME}/token/user-by-id/${hotel.hotelOwnerId}`;
     const headers = this.authService.getAuthenticationHeader();
@@ -123,6 +125,56 @@ export class AdminComponent {
           console.log(hotel.hotelOwner);
         },
         (error) => { console.error('Error fetching user info:', error); }
+      );
+  }
+
+  fetchHotelOwnersNotActivated() {
+    const usersUrl = `${environment.API_HOSTNAME}/token/hotel-owners-not-activated`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.get<User[]>(usersUrl, { headers })
+      .subscribe(
+        (hotelOwners: User[]) => {
+          this.hotelOwnersNotActivated = hotelOwners;
+          console.warn(hotelOwners);
+        },
+        (error) => { console.error('Error fetching hotelOwners info:', error); }
+      );
+  }
+
+  confirmRegistration(hotelOwner: User) {
+    const usersUrl = `${environment.API_HOSTNAME}/token/activate-account/${hotelOwner.id}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.get(usersUrl, { headers })
+      .subscribe(
+        (response: any) => {
+          console.warn('confirmed')
+          this.notificationService.showSuccess('Аккаунт менеджера подтверждён!', 'Успех')
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        },
+        (error) => { console.error('Error fetching hotelOwners info:', error); }
+      );
+  }
+
+  dontConfirmRegistration(hotelOwner: User) {
+    const usersUrl = `${environment.API_HOSTNAME}/token/decline-account/${hotelOwner.id}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.get(usersUrl, { headers })
+      .subscribe(
+        (response: any) => {
+          console.warn('not confirmed')
+          this.notificationService.showSuccess('Менеджеру отказано в регистрации.', 'Успех')
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        },
+        (error) => { console.error('Error fetching hotelOwners info:', error); }
       );
   }
 

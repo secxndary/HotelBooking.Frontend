@@ -49,6 +49,11 @@ export class AuthComponent {
             this.errorMessages = {};
             this.route.navigate(['hotel-owner-account-still-not-activated-yet']);
           }
+          else if (response.message == 'AccountDeclined') {
+            this.signInForm.reset();
+            this.errorMessages = {};
+            this.notificationService.showError('Вам было отказано в регистрации. Попробуйте зарегистрироваться еще раз позже', 'Ошибка!', { timeOut: 5000 })
+          }
           else {
             this.authService.setTokens(accessToken, refreshToken);
             this.signInForm.reset();

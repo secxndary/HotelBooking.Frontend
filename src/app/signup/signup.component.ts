@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { environment } from 'src/environments/environments';
+import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'app-signup',
@@ -18,7 +19,8 @@ export class SignupComponent {
   constructor(
     private httpClient: HttpClient,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -47,9 +49,9 @@ export class SignupComponent {
       .post(apiUrl, this.signUpForm.value)
       .subscribe(
         (response: any) => {
-          console.log(this.signUpForm.value);
+          console.log(response);
 
-          if (response.message == 'AccountNotActivated') {
+          if (response?.message == 'AccountNotActivated') {
             this.signUpForm.reset();
             this.errorMessages = {};
 
@@ -60,7 +62,12 @@ export class SignupComponent {
           } else {
             this.signUpForm.reset();
             this.errorMessages = {};
-            this.router.navigate(['/auth']);
+
+            this.notificationService.showSuccess('Вы успешно зарегистрировались! Теперь войдите в аккаунт.', 'Успех');
+
+            setTimeout(() => {
+              this.router.navigate(['/auth']);
+            }, 500);
           }
 
         },
