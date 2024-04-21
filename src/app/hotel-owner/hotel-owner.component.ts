@@ -269,30 +269,34 @@ export class HotelOwnerComponent {
         }
       );
 
-    setTimeout(() =>
-      window.location.reload(),
-      200);
+    setTimeout(() => {
+      window.location.reload()
+    }, 500);
   }
 
+
   updateRoom(hotelId: string, roomId: string) {
-    const roomsUrl = `${environment.API_HOSTNAME}/rooms/${roomId}`;
+    const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}/rooms/${roomId}`;
     const headers = this.authService.getAuthenticationHeader();
 
-    const price = this.roomFormCreate.get('price')?.value;
-    const sleepingPlaces = this.roomFormCreate.get('sleepingPlaces')?.value;
-    const quantity = this.roomFormCreate.get('quantity')?.value;
-    const roomTypeId = this.roomFormCreate.get('roomTypeId')?.value;
+    const price = this.roomForm.get('price')?.value;
+    const sleepingPlaces = this.roomForm.get('sleepingPlaces')?.value;
+    const quantity = this.roomForm.get('quantity')?.value;
+    const roomTypeId = this.roomForm.get('roomTypeId')?.value;
 
     const body = { price, sleepingPlaces, quantity, roomTypeId };
-    console.log(body);
 
     this.httpClient.put(roomsUrl, body, { headers })
       .subscribe(
         (res) => {
           // this.fetchRoomsByOwner();
-          // this.notificationService.showSuccess('Отель успешно обновлён!', '');
+          this.notificationService.showSuccess('Комната успешно обновлена!', '');
           console.log(`Update room with ID: ${roomId}`);
-          this.closeModal();
+
+          setTimeout(() => {
+            this.closeModalRoom();
+            window.location.reload();
+          }, 500);
         },
         (error) => {
           console.error('Error fetching room info:', error);
@@ -357,7 +361,8 @@ export class HotelOwnerComponent {
     this.modalCreate.show();
   }
 
-  openModalRoom(room: Room) {
+
+  openModalRoom(hotel: Hotel, room: Room) {
     const targetEl = document.getElementById("modal-room");
     const options = {
       modalPlacement: "bottom-right",
@@ -366,8 +371,9 @@ export class HotelOwnerComponent {
         "bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"
     };
 
-    // this.currentRoom = room;
-    // this.initializeFormWithRoomData();
+    this.currentRoom = room;
+    this.currentHotel = hotel;
+    this.initializeFormWithRoomData();
 
     const modal = new Modal(targetEl, options);
     this.modalRoom = modal;
@@ -409,9 +415,10 @@ export class HotelOwnerComponent {
     }
   }
 
+
   initializeFormWithRoomData() {
     if (this.currentRoom) {
-      this.roomFormCreate.patchValue({
+      this.roomForm.patchValue({
         sleepingPlaces: this.currentRoom.sleepingPlaces,
         quantity: this.currentRoom.quantity,
         price: this.currentRoom.price,

@@ -300,7 +300,7 @@
                         <td class="mx-0 py-4 whitespace-no-wrap text-center border-b border-gray-200">
                             <button
                                 class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl  mr-6"
-                                (click)="updateRoom(hotel.id, room.id)">Редактировать</button>
+                                (click)="openModalRoom(hotel, room)">Редактировать</button>
                             <button
                                 class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl mt-2 mr-5"
                                 (click)="deleteRoom(hotel.id, room.id)">Удалить</button>
@@ -334,42 +334,74 @@
                             </button>
                         </div>
 
-                        <form class="px-4" *ngIf="currentHotel !== undefined" [formGroup]="roomForm">
-                            <div class="p-6">
-                                <div class="mr-10">
-                                    <label for="sleepingPlaces" class="block text-gray-700 text-xl ">
-                                        Количество спальных мест:
+                        <form class="p-4 md:p-5" [formGroup]="roomForm">
+                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                <div class="col-span-2">
+                                    <!-- <label for="name"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Отель
                                     </label>
-                                    <input formControlName="sleepingPlaces" id="sleepingPlaces" name="sleepingPlaces"
-                                        type="text"
-                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-52 mt-2"
-                                        [value]="currentRoom!.sleepingPlaces">
+                                    <input type="text" name="name" id="name"
+                                        class="bg-gray-50 border font-semibold border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Введите название" required="" readonly [value]="hotel.name"> -->
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="sleepingPlaces"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Спальные места
+                                    </label>
+                                    <input type="number" name="sleepingPlaces" id="sleepingPlaces"
+                                        formControlName="sleepingPlaces" min="1" max="16"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Кол-во спальных мест" required="">
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="quantity"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Всего таких комнат
+                                    </label>
+                                    <input type="number" name="quantity" id="quantity" formControlName="quantity"
+                                        min="1"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Число от 1 и выше" required="">
+                                </div>
+                                <div class="mb-2 col-span-2">
+                                    <label for="price"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Стоимость за одни сутки
+                                    </label>
+                                    <input type="number" name="price" id="price" formControlName="price" min="1"
+                                        max="999"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="В белорусских рублях (BYN)" required="">
                                 </div>
 
-                                <div class="mr-10 mt-4">
-                                    <label for="description" class="block text-gray-700 text-xl ">
-                                        Краткое описание отеля:
-                                    </label>
-                                    <input formControlName="description" id="description" name="description" type="text"
-                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-3/4 mt-2"
-                                        [value]="currentHotel!.description">
-                                </div>
-
-                                <div class="mr-10 mt-4">
-                                    <label for="stars" class="block text-gray-700 text-xl ">
-                                        Количество звезд:
-                                    </label>
-                                    <input formControlName="stars" id="stars" name="stars" type="number" min="1" max="5"
-                                        class="border rounded-md px-3 py-1.5 text-md focus:outline-none focus:ring w-48 mt-2"
-                                        [value]="currentHotel!.stars" placeholder="Целое число от 1 до 5">
+                                <div class="mb-4 col-span-2">
+                                    <label for="roomTypeId" class="mb-2 block">Тип номера:</label>
+                                    <select formControlName="roomTypeId" id="roomTypeId"
+                                        class="border border-gray-300 px-3 py-2 rounded-md w-full">
+                                        <option value="" disabled selected>Выберите тип</option>
+                                        <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name }}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
+                            <button (click)="updateRoom(currentHotel.id, currentRoom.id)"
+                                class="mt-4 text-white inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-indigo-800">
+                                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Добавить (обновить) комнату
+                            </button>
                         </form>
                         <div *ngIf="currentHotel"
                             class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600 ml-4">
                             <button type="button"
                                 class="text-white bg-indigo-600 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
-                                (click)="updateHotel(currentHotel!.id)">
+                                (click)="updateRoom(currentHotel.id, currentRoom.id)">
                                 Обновить
                             </button>
                             <button type="button"
