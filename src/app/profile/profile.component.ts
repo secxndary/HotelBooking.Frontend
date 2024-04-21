@@ -146,8 +146,8 @@ export class ProfileComponent {
       dateStartDate = new Date(dateStart);
       dateEndDate = new Date(dateEnd);
     }
-    reservation.room.totalPrice = reservation.room.price;
-    totalPrice = reservation.room.totalPrice;
+    reservation.room.totalPrice = reservation.room?.price;
+    totalPrice = reservation.room?.totalPrice;
 
     if (dateStartDate! > dateEndDate!) {
       this.notificationService.showError('Дата заезда не может быть позже даты выезда', 'Ошибка!');
@@ -156,9 +156,9 @@ export class ProfileComponent {
 
     const diffTime = Math.abs(dateEndDate!.getTime() - dateStartDate!.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    totalPrice = reservation.room.price * diffDays;
+    totalPrice = reservation.room?.price * diffDays;
     if (totalPrice === 0)
-      totalPrice = reservation.room.price;
+      totalPrice = reservation.room?.price;
 
     return totalPrice;
   }
@@ -177,6 +177,7 @@ export class ProfileComponent {
   }
 
   isNotOldDate(date: Date) {
-    return new Date(date) > new Date();
+    const today = new Date().setHours(0, 0, 0, 0);
+    return new Date(date) >= new Date(today);
   }
 }
