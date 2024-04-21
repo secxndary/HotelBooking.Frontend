@@ -12,7 +12,7 @@
     <!-- Hotel info -->
     <div class="flex flex-col items-center mx-auto mt-4 mb-4">
         <h1 class="text-6xl font-bold tracking-tight text-gray-700 sm:text-6xl mx-auto mt-4 mb-2">{{hotel!.name}}</h1>
-    <h1 class="text-xl tracking-tight text-gray-600 sm:text-2xl mx-auto mt-2 mb-2">{{hotel!.address}}</h1>
+        <h1 class="text-xl tracking-tight text-gray-600 sm:text-2xl mx-auto mt-2 mb-2">{{hotel!.address}}</h1>
         <div class="flex items-center mt-2">
             <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
                 <svg [class]="star <= hotel!.stars ? 'w-10 h-10 fill-current text-yellow-400' : 'w-10 h-10 fill-current text-gray-300 stroke-current'"
