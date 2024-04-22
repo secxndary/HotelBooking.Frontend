@@ -310,7 +310,7 @@ export class HotelOwnerComponent {
 
 
   deleteRoom(hotelId: string, roomId: string) {
-    const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}/rooms/${roomId}`;
+    const roomsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}/rooms/delete/${roomId}`;
     const headers = this.authService.getAuthenticationHeader();
 
     this.httpClient.delete(roomsUrl, { headers })
@@ -326,7 +326,7 @@ export class HotelOwnerComponent {
       );
 
     setTimeout(() =>
-      window.location.reload(),
+      // window.location.reload(),
       200);
   }
 
