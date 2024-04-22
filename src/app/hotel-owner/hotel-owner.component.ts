@@ -11,6 +11,8 @@ import { User } from '../interfaces/user';
 import { UserService } from '../user.service';
 import { Room } from '../interfaces/room';
 import { RoomType } from '../interfaces/roomType';
+import { RoomPhoto } from '../interfaces/roomPhoto';
+import { HotelPhoto } from '../interfaces/hotelPhoto';
 
 @Component({
   selector: 'app-hotel-owner',
@@ -34,6 +36,9 @@ export class HotelOwnerComponent {
   modalCreate: any;
   modalRoom: any;
   modalCreateRoom: any;
+
+  fileNamesRoom: string[] = [];
+  fileNamesHotel: string[] = [];
 
   constructor(
     private httpClient: HttpClient,
@@ -132,7 +137,7 @@ export class HotelOwnerComponent {
                 (reservedRooms: Room[]) => {
                   hotel.reservedRooms = reservedRooms;
                   room.quantityReserved = hotel.reservedRooms.length;
-                  console.log('hotel.reservedRooms', hotel.reservedRooms)
+                  // console.log('hotel.reservedRooms', hotel.reservedRooms)
                 },
                 (error) => { console.error('Error fetching room info:', error); }
               );
@@ -173,10 +178,18 @@ export class HotelOwnerComponent {
 
     const body = { name, description, stars, hotelOwnerId, address };
 
-    this.httpClient.post(hotelsUrl, body, { headers })
+    this.httpClient.post<Hotel>(hotelsUrl, body, { headers })
       .subscribe(
         (res) => {
           this.fetchHotelsByOwner();
+
+          const createdHotelId = res.id;
+          console.warn('hotel created id: ', createdHotelId);
+
+          this.fileNamesHotel.forEach(fileNameHotel => {
+            this.uploadHotelPhoto(createdHotelId, fileNameHotel);
+          });
+
           this.notificationService.showSuccess('Отель создан!', '');
           this.closeModalCreate();
         },
@@ -253,10 +266,18 @@ export class HotelOwnerComponent {
 
     const body = { price, sleepingPlaces, quantity, roomTypeId };
 
-    this.httpClient.post(roomsUrl, body, { headers })
+    this.httpClient.post<Room>(roomsUrl, body, { headers })
       .subscribe(
         (res) => {
           // this.fetchRoomsForHotel();
+
+          const createdRoomId = res.id;
+          console.warn(createdRoomId);
+
+          this.fileNamesRoom.forEach(fileNameRoom => {
+            this.uploadRoomPhoto(createdRoomId, fileNameRoom);
+          });
+
           this.notificationService.showSuccess('Комната создана!', '');
           this.closeModalCreateRoom();
         },
@@ -271,7 +292,7 @@ export class HotelOwnerComponent {
 
     setTimeout(() => {
       window.location.reload()
-    }, 500);
+    }, 1000);
   }
 
 
@@ -326,8 +347,95 @@ export class HotelOwnerComponent {
       );
 
     setTimeout(() =>
-      // window.location.reload(),
-      200);
+      window.location.reload(),
+      500);
+  }
+
+  // Выбор фото
+  onFileSelectedRoom(event: any) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fileNamesRoom.push(file.name);
+        console.log('Selected file name room:', file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Загрузка фото
+  uploadRoomPhoto(roomId: string, filenameRoom: string) {
+    this.fileNamesRoom.forEach(element => {
+      // Logic for uploading photo (if needed)
+      console.log(element)
+    });
+    console.log('\n');
+
+    const roomsUrl = `${environment.API_HOSTNAME}/rooms/${roomId}/photos`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    // )))))))))))))
+    const body = { path: "C:\\Users\\secxndary\\Desktop\\Files\\Rooms\\" + filenameRoom };
+
+    this.httpClient.post<RoomPhoto>(roomsUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          console.warn(res);
+        },
+        (error) => {
+          console.error('Error fetching room info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Не удалось загрузить фото', 'Ошибка!');
+        }
+      );
+  }
+
+
+  // Выбор фото
+  onFileSelectedHotel(event: any) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fileNamesHotel.push(file.name);
+        console.log('Selected file name Hotel:', file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Загрузка фото
+  uploadHotelPhoto(hotelId: string, filenameHotel: string) {
+    this.fileNamesHotel.forEach(element => {
+      // Logic for uploading photo (if needed)
+      console.log(element)
+    });
+    console.log('\n');
+
+    const HotelsUrl = `${environment.API_HOSTNAME}/hotels/${hotelId}/photos`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    // )))))))))))))
+    const body = { path: "C:\\Users\\secxndary\\Desktop\\Files\\Hotels\\" + filenameHotel };
+
+    this.httpClient.post<HotelPhoto>(HotelsUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          console.warn(res);
+        },
+        (error) => {
+          console.error('Error fetching Hotel info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Не удалось загрузить фото', 'Ошибка!');
+        }
+      );
   }
 
   openModal(hotel: Hotel) {
