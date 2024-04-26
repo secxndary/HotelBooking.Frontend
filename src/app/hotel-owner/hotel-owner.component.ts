@@ -377,7 +377,7 @@ export class HotelOwnerComponent {
     const headers = this.authService.getAuthenticationHeader();
 
     // )))))))))))))
-    const body = { path: "C:\\Users\\secxndary\\Desktop\\Files\\Rooms\\" + filenameRoom };
+    const body = { path: "D:\\Hard Drive Files\\Content\\Images\\Rooms\\" + filenameRoom };
 
     this.httpClient.post<RoomPhoto>(roomsUrl, body, { headers })
       .subscribe(
@@ -421,7 +421,7 @@ export class HotelOwnerComponent {
     const headers = this.authService.getAuthenticationHeader();
 
     // )))))))))))))
-    const body = { path: "C:\\Users\\secxndary\\Desktop\\Files\\Hotels\\" + filenameHotel };
+    const body = { path: "D:\\Hard Drive Files\\Content\\Images\\Hotels\\" + filenameHotel };
 
     this.httpClient.post<HotelPhoto>(HotelsUrl, body, { headers })
       .subscribe(
