@@ -18,6 +18,8 @@ import { RoomPhoto } from '../interfaces/roomPhoto';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  cities!: string[];
+  city!: string;
   arrivalDate!: Date;
   departureDate!: Date;
   sleepingPlaces!: number;
@@ -44,10 +46,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.getQueryParams();
+    this.fetchCities();
     this.fetchRooms();
     this.fetchRoomTypes();
 
     this.filterForm = this.formBuilder.group({
+      city: this.city,
       minStars: 1,
       maxStars: 5,
       sleepingPlaces: this.sleepingPlaces ?? 2,
@@ -56,6 +60,26 @@ export class HomeComponent implements OnInit {
       sortDirection: '',
       searchTerm: ''
     });
+  }
+
+  fetchCities() {
+    const accessToken = this.authService.getAccessToken();
+    if (!accessToken)
+      return;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    this.httpClient.get<string[]>(`${environment.API_HOSTNAME}/hotels/addresses`, { headers })
+      .subscribe(
+        (cities: string[]) => {
+          this.cities = cities;
+          console.log('Cities:', cities);
+        },
+        (error) => {
+          console.error('Error fetching cities details:', error);
+        }
+      );
   }
 
   fetchRooms(): void {
@@ -71,6 +95,7 @@ export class HomeComponent implements OnInit {
 
     const params = new HttpParams()
       .set('pageSize', 50)
+      .set('city', this.city)
       .set('minSleepingPlaces', this.sleepingPlaces)
       .set('maxSleepingPlaces', +this.sleepingPlaces + 2);
 
@@ -106,6 +131,7 @@ export class HomeComponent implements OnInit {
 
     const params = new HttpParams()
       .set('pageSize', 50)
+      .set('city', this.city)
       .set('orderBy', 'stars desc');
 
     this.httpClient.get<Hotel[]>(hotelsUrl, { headers, params })
@@ -236,6 +262,7 @@ export class HomeComponent implements OnInit {
   redirectToHotelPage(hotelId: string) {
     this.router.navigate([`hotels/${hotelId}`], {
       queryParams: {
+        city: this.city,
         arrivalDate: this.arrivalDate,
         departureDate: this.departureDate,
         sleepingPlaces: this.sleepingPlaces
@@ -264,6 +291,28 @@ export class HomeComponent implements OnInit {
     const minStars = this.filterForm.get('minStars')?.value;
     const maxStars = this.filterForm.get('maxStars')?.value;
 
+    let roomsParams = new HttpParams();
+
+    console.log(this.filterForm.get('city')?.value)
+
+    if (this.filterForm.get('city')?.value === "all") {
+      this.city = '';
+
+      roomsParams = new HttpParams()
+        .set('pageSize', '50')
+        .set('minSleepingPlaces', formValue.sleepingPlaces)
+        .set('maxSleepingPlaces', formValue.sleepingPlaces + 2);
+    }
+    else {
+      this.city = this.filterForm.get('city')?.value;
+
+      roomsParams = new HttpParams()
+        .set('pageSize', '50')
+        .set('city', this.city)
+        .set('minSleepingPlaces', formValue.sleepingPlaces)
+        .set('maxSleepingPlaces', formValue.sleepingPlaces + 2);
+    }
+
     if (minStars > maxStars) {
       this.notificationService.showError('Минимальное значение не может быть больше максимального', '');
       return;
@@ -276,11 +325,6 @@ export class HomeComponent implements OnInit {
       Authorization: `Bearer ${accessToken}`
     });
 
-    const roomsParams = new HttpParams()
-      .set('pageSize', '50')
-      .set('minSleepingPlaces', formValue.sleepingPlaces)
-      .set('maxSleepingPlaces', formValue.sleepingPlaces + 2);
-
     this.httpClient.get<Room[]>(roomsUrl, { headers, params: roomsParams })
       .subscribe(
         (roomsData: Room[]) => {
@@ -291,12 +335,14 @@ export class HomeComponent implements OnInit {
             ? new HttpParams()
               .set('pageSize', '50')
               .set('orderBy', `${formValue.sortName} ${formValue.sortDirection}`)
+              .set('city', this.city)
               .set('minStars', formValue.minStars)
               .set('maxStars', formValue.maxStars)
               .set('searchTerm', formValue.searchTerm)
             : new HttpParams()
               .set('pageSize', '50')
               .set('orderBy', `${formValue.sortName} ${formValue.sortDirection}`)
+              .set('city', this.city)
               .set('minStars', formValue.minStars)
               .set('maxStars', formValue.maxStars);
 
@@ -346,10 +392,12 @@ export class HomeComponent implements OnInit {
 
   private getQueryParams(): void {
     this.route.queryParams.subscribe(params => {
+      this.city = params['city'];
       this.arrivalDate = params['arrivalDate'];
       this.departureDate = params['departureDate'];
       this.sleepingPlaces = params['sleepingPlaces'];
 
+      console.log('City:', this.city);
       console.log('Arrival Date:', this.arrivalDate);
       console.log('Departure Date:', this.departureDate);
       console.log('Sleeping Places:', this.sleepingPlaces);

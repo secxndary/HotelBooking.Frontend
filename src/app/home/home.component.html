@@ -25,14 +25,15 @@
                     class="border border-gray-300 px-3 py-2 rounded-md w-full">
             </div>
 
-            <!-- <div class="mb-4">
-                <label for="roomType" class="mb-2 block">Тип номера:</label>
-                <select formControlName="roomType" id="roomType"
+            <div class="mb-4">
+                <label for="roomType" class="mb-2 block">Место назначения:</label>
+                <select formControlName="city" id="city"
                     class="border border-gray-300 px-3 py-2 rounded-md w-full">
-                    <option value="" disabled selected>Выберите тип</option>
-                    <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name }}</option>
+                    <option value="" disabled selected>Выберите место назначения</option>
+                    <option value="all">Выбрать все</option>
+                    <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
                 </select>
-            </div> -->
+            </div>
 
             <div class="mb-1">
                 <label for="sortName" class="mb-2 block">Отсортировать по:</label>

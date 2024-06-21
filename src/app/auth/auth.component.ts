@@ -57,7 +57,7 @@ export class AuthComponent {
           else {
             this.authService.setTokens(accessToken, refreshToken);
             this.signInForm.reset();
-            this.route.navigate(['/home']);
+            this.route.navigate(['/search']);
             this.notificationService.showSuccess(`Добро пожаловать в StaySpot!`, '');
           }
         },
