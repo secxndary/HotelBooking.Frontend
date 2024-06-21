@@ -23,6 +23,7 @@
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "flowbite": "^2.2.1",
+    "jquery": "^3.7.1",
     "ngx-build-plus": "^16.0.0",
     "ngx-lightbox": "^3.0.0",
     "ngx-slick-carousel": "^15.0.0",
