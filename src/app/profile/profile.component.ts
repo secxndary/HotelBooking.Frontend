@@ -10,6 +10,7 @@ import { Hotel } from '../interfaces/hotel';
 import { Room } from '../interfaces/room';
 import { Router } from '@angular/router';
 import { NotificationService } from '../notification.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-profile',
@@ -19,11 +20,12 @@ import { NotificationService } from '../notification.service';
 export class ProfileComponent {
   user: User | undefined;
   reservations: Reservation[] = [];
-
   isAdmin: boolean | undefined = false;
   isHotelOwner: boolean | undefined = false;
-
   today = new Date();
+  
+  editProfileForm: FormGroup;
+  isEditModalOpen: boolean = false;
 
   constructor(
     private userService: UserService,
@@ -31,23 +33,69 @@ export class ProfileComponent {
     private httpClient: HttpClient,
     private router: Router,
     private notificationService: NotificationService,
-  ) { }
+    private fb: FormBuilder
+  ) {
+    this.editProfileForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      userName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: ['', Validators.required],
+    });
+  }
 
   ngOnInit(): void {
-    this.userService.getUserFromToken()
-      .subscribe(
+    this.userService.getUserFromToken().subscribe(
+      (user: User) => {
+        this.user = user;
+        this.isAdmin = this.user?.roles.includes('Admin');
+        this.isHotelOwner = this.user?.roles.includes('HotelOwner');
+        this.setEditProfileFormValues();
+        setTimeout(() => {
+          this.fetchReservations(user.id);
+        }, 100);
+      },
+      (error) => {
+        console.error('Error fetching user details:', error);
+      }
+    );
+  }
+
+  setEditProfileFormValues() {
+    if (this.user) {
+      this.editProfileForm.setValue({
+        firstName: this.user.firstName || '',
+        lastName: this.user.lastName || '',
+        userName: this.user.userName || '',
+        email: this.user.email || '',
+        phoneNumber: this.user.phoneNumber || '',
+      });
+    }
+  }
+
+  openEditModal() {
+    this.isEditModalOpen = true;
+  }
+
+  closeEditModal() {
+    this.isEditModalOpen = false;
+  }
+
+  updateProfile() {
+    if (this.editProfileForm.valid) {
+      const updatedUser = { ...this.user, ...this.editProfileForm.value };
+      this.httpClient.put<User>(`${environment.API_HOSTNAME}/user`, updatedUser).subscribe(
         (user: User) => {
           this.user = user;
-          this.isAdmin = this.user?.roles.includes('Admin') ? this.user?.roles.includes('Admin') : undefined;
-          this.isHotelOwner = this.user?.roles.includes('HotelOwner') ? this.user?.roles.includes('HotelOwner') : undefined;
-          setTimeout(() => {
-            this.fetchReservations(user.id);
-          }, 100);
+          this.notificationService.showSuccess('Profile updated successfully', '');
+          this.closeEditModal();
         },
         (error) => {
-          console.error('Error fetching user details:', error);
+          console.error('Error updating profile:', error);
+          this.notificationService.showError('Failed to update profile', '');
         }
       );
+    }
   }
 
   fetchReservations(userId: string) {
