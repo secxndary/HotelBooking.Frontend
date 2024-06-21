@@ -10,6 +10,7 @@ import { environment } from '../../environments/environments';
 import { User } from '../interfaces/user';
 import { UserService } from '../user.service';
 import { Room } from '../interfaces/room';
+import { RoomType } from '../interfaces/roomType';
 
 @Component({
   selector: 'app-admin',
@@ -17,18 +18,22 @@ import { Room } from '../interfaces/room';
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent {
+  roomTypes: RoomType[] = [];
   hotels: Hotel[] = [];
   hotelOwner!: User;
   currentHotel!: Hotel;
+  currentRoomType!: RoomType;
   hotelOwnersNotActivated: User[] = [];
 
   hotelForm!: FormGroup;
   hotelFormCreate!: FormGroup;
-  roomFormCreate!: FormGroup;
+  roomTypeFormCreate!: FormGroup;
+  roomTypeFormEdit!: FormGroup;
 
   modal: any;
   modalCreate: any;
-  modalCreateRoom: any;
+  modalCreateRoomType: any;
+  modalEditRoomType: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -45,6 +50,7 @@ export class AdminComponent {
           this.hotelOwner = user;
           this.fetchHotelsByOwner();
           this.fetchHotelOwnersNotActivated();
+          this.fetchRoomTypes();
           console.log('User: ', this.hotelOwner);
         },
         (error) => {
@@ -70,11 +76,14 @@ export class AdminComponent {
       stars: undefined
     });
 
-    this.roomFormCreate = this.formBuilder.group({
-      price: undefined,
-      quantity: undefined,
-      sleepingPlaces: undefined,
-      roomTypeId: ''
+    this.roomTypeFormCreate = this.formBuilder.group({
+      name: undefined,
+      description: undefined
+    });
+
+    this.roomTypeFormEdit = this.formBuilder.group({
+      name: undefined,
+      description: undefined
     });
   }
 
@@ -139,6 +148,19 @@ export class AdminComponent {
           console.warn(hotelOwners);
         },
         (error) => { console.error('Error fetching hotelOwners info:', error); }
+      );
+  }
+
+  fetchRoomTypes() {
+    const roomTypesUrl = `${environment.API_HOSTNAME}/roomTypes`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.get<RoomType[]>(roomTypesUrl, { headers })
+      .subscribe(
+        (roomTypes: RoomType[]) => {
+          this.roomTypes = roomTypes;
+        },
+        (error) => { console.error('Error fetching roomType info:', error); }
       );
   }
 
@@ -257,6 +279,82 @@ export class AdminComponent {
       );
   }
 
+  createRoomType() {
+    const roomTypesUrl = `${environment.API_HOSTNAME}/roomTypes`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    const name = this.roomTypeFormCreate.get('name')?.value;
+    const description = this.roomTypeFormCreate.get('description')?.value;
+
+    const body = { name, description };
+
+    this.httpClient.post(roomTypesUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          this.notificationService.showSuccess('Тип номера создан!', '');
+          this.closeModalCreateRoomType();
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        },
+        (error) => {
+          console.error('Error fetching roomType info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Не удалось создать тип номера', 'Ошибка!');
+        }
+      );
+  }
+
+  updateRoomType(roomTypeId: string) {
+    const roomTypesUrl = `${environment.API_HOSTNAME}/roomTypes/${roomTypeId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    const name = this.roomTypeFormEdit.get('name')?.value;
+    const description = this.roomTypeFormEdit.get('description')?.value;
+
+    const body = { name, description };
+
+    this.httpClient.put(roomTypesUrl, body, { headers })
+      .subscribe(
+        (res) => {
+          this.notificationService.showSuccess('Тип номера успешно обновлён!', '');
+          console.log(`Update roomType with ID: ${roomTypeId}`);
+          this.closeModalEditRoomType();
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+        },
+        (error) => {
+          console.error('Error fetching roomType info:', error);
+          if (error.status === 422)
+            this.notificationService.showError(`${error.error.Stars[0]}`, 'Ошибка!');
+          else
+            this.notificationService.showError('Тип комнаты не удалось обновить', 'Ошибка!');
+        }
+      );
+  }
+
+  deleteRoomType(roomTypeId: string) {
+    const roomTypesUrl = `${environment.API_HOSTNAME}/roomTypes/${roomTypeId}`;
+    const headers = this.authService.getAuthenticationHeader();
+
+    this.httpClient.delete(roomTypesUrl, { headers })
+      .subscribe(
+        (res) => {
+          console.log(`Delete roomType with ID: ${roomTypeId}`);
+          this.notificationService.showSuccess('Тип номера успешно удалён', '');
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        },
+        (error) => {
+          console.error('Error fetching roomType info:', error);
+          this.notificationService.showError('Тип номера не получилось удалить', 'Ошибка!');
+        }
+      );
+  }
 
   openModal(hotel: Hotel) {
     const targetEl = document.getElementById("modalEl");
@@ -289,8 +387,8 @@ export class AdminComponent {
     this.modalCreate.show();
   }
 
-  openModalCreateRoom() {
-    const targetEl = document.getElementById("");
+  openModalCreateRoomType() {
+    const targetEl = document.getElementById("create-modal-roomType");
     const options = {
       modalPlacement: "bottom-right",
       modalBackdrop: "static",
@@ -299,14 +397,35 @@ export class AdminComponent {
     };
 
     const modal = new Modal(targetEl, options);
-    this.modalCreateRoom = modal;
-    this.modalCreateRoom.show();
+    this.modalCreateRoomType = modal;
+    this.modalCreateRoomType.show();
+  }
+
+  openModalEditRoomType(roomType: RoomType) {
+    const targetEl = document.getElementById("modalElRoomType");
+    const options = {
+      modalPlacement: "bottom-right",
+      modalBackdrop: "static",
+      backdropClasses:
+        "bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"
+    };
+
+    this.currentRoomType = roomType;
+    this.initializeFormWithRoomTypeData();
+
+    const modal = new Modal(targetEl, options);
+    this.modalEditRoomType = modal;
+    this.modalEditRoomType.show();
   }
 
 
   closeModal = () => this.modal.hide();
 
   closeModalCreate = () => this.modalCreate.hide();
+
+  closeModalCreateRoomType = () => this.modalCreateRoomType.hide();
+
+  closeModalEditRoomType = () => this.modalEditRoomType.hide();
 
 
   initializeFormWithHotelData() {
@@ -316,6 +435,15 @@ export class AdminComponent {
         description: this.currentHotel.description,
         address: this.currentHotel.address,
         stars: this.currentHotel.stars
+      });
+    }
+  }
+
+  initializeFormWithRoomTypeData() {
+    if (this.currentRoomType) {
+      this.roomTypeFormEdit.patchValue({
+        name: this.currentRoomType.name,
+        description: this.currentRoomType.description,
       });
     }
   }
