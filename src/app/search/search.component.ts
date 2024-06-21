@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environments';
 
 @Component({
   selector: 'app-search',
@@ -8,6 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent {
+  cities!: string[];
   today: string = new Date().toISOString().split('T')[0];
   arrivalDate: string = this.getTodayPlusOne(this.today);
   departureDate: string = this.getTodayPlusTwo(this.today);
@@ -16,11 +20,16 @@ export class SearchComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private httpClient: HttpClient
   ) { }
 
   ngOnInit(): void {
+    this.fetchCities();
+
     this.searchForm = this.formBuilder.group({
+      city: '',
       arrivalDate: this.getTodayPlusOne(this.today),
       departureDate: this.getTodayPlusTwo(this.today),
       sleepingPlaces: [2]
@@ -28,17 +37,39 @@ export class SearchComponent {
   }
 
   onSubmit(): void {
+    const city = this.searchForm.get('city')?.value;
     const arrivalDate = this.searchForm.get('arrivalDate')?.value;
     const departureDate = this.searchForm.get('departureDate')?.value;
     const sleepingPlaces = this.sleepingPlaces;
 
     this.router.navigate(['/home'], {
       queryParams: {
+        city,
         arrivalDate,
         departureDate,
         sleepingPlaces
       }
     });
+  }
+
+  fetchCities() {
+    const accessToken = this.authService.getAccessToken();
+    if (!accessToken)
+      return;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    this.httpClient.get<string[]>(`${environment.API_HOSTNAME}/hotels/addresses`, { headers })
+      .subscribe(
+        (cities: string[]) => {
+          this.cities = cities;
+          console.log('Cities:', cities);
+        },
+        (error) => {
+          console.error('Error fetching cities details:', error);
+        }
+      );
   }
 
   getTodayPlusOne(date: string): string {

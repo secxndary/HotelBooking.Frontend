@@ -2,6 +2,14 @@
     
     <form class="bg-white shadow-2xl shadow-indigo-500 rounded-xl px-8 pt-6 pb-8 mb-4 flex flex-row" [formGroup]="searchForm" (ngSubmit)="onSubmit()">  
     
+      <div class="mr-10">
+        <label for="city" class="block text-gray-700">Место назначения</label>
+        <select formControlName="city" id="city" name="city" class="border rounded-md px-3 py-1 focus:outline-none focus:ring focus:border-blue-300">
+          <option value="" disabled selected >Куда Вы поедете?</option>
+          <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+        </select>
+      </div>
+
     <div class="mr-10">
       <label for="arrivalDate" class="block text-gray-700">Дата заезда</label>
       <input formControlName="arrivalDate" id="arrivalDate" name="arrivalDate" type="date" class="border rounded-md px-3 py-1 focus:outline-none focus:ring focus:border-blue-300">
